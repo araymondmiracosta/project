@@ -1,5 +1,8 @@
 package edu.cs370_group.project;
 
+import java.util.HashMap;
+import java.util.Map;
+
 class Person {
 	int age;
 	int id;
@@ -11,7 +14,7 @@ class Person {
 		this.name = "";
 	}
 
-	Person(int age, int id, String name) {
+	Person(int id, int age, String name) {
 		this.age = age;
 		this.id = id;
 		this.name = name;
@@ -27,5 +30,14 @@ class Person {
 
 	String getName() {
 		return this.name;
+	}
+
+	Map<String, String> getMap() {
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("id", Integer.toString(this.id)); 
+		data.put("age", Integer.toString(this.age));
+		data.put("name", this.name);
+
+		return data;
 	}
 }
