@@ -40,9 +40,9 @@ public class Controller {
 	}
 
 	@RequestMapping("/createGenericSession")
-	public int createGenericSession(@RequestParam String[] options) {
-		return (sessionManager.createGenericSession(options));
-	}
+	/*public int createGenericSession(@RequestParam String[] options) {
+		//return (sessionManager.createGenericSession(options));
+	}*/
 
 	@GetMapping("/newVote")
 	@ResponseStatus(code = HttpStatus.OK, reason = "OK")
