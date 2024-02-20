@@ -49,4 +49,10 @@ public class Controller {
 	public void newVote(@RequestParam int session, @RequestParam int option) {
 		sessionManager.newVote(session, option);
 	}
+
+	@GetMapping("/devVote")
+	@ResponseStatus(code = HttpStatus.OK, reason = "OK")
+	public void delVote(@RequestParam int session, @RequestParam int option) {
+		sessionManager.delVote(session, option);
+	}
 }

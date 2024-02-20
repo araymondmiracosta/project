@@ -15,17 +15,16 @@ class SessionManager {
 		this.databaseHelper = databaseHelper;
 	}
 
-	// Need to convert from List<Integer> to List<Integer, String>
 	public int endSession(int sessionID) {
 		double majority = 0.60;
 		int tallyTotal = 0;
 		List<Integer> options = databaseHelper.getOptions(sessionID);
 		List<Integer[]> optionsTallies = new ArrayList<Integer[]>();
-		Integer[] greatestOption;
+		Integer[] greatestOption = new Integer[2];
 		
 		for (int optionID : options) {
 			int tally = databaseHelper.getOptionVoteTally(sessionID, optionID);
-			Integer tallyMap[];
+			Integer tallyMap[] = new Integer[2];
 			tallyMap[0] = Integer.valueOf(optionID);
 			tallyMap[1] = Integer.valueOf(tally);
 			optionsTallies.add(tallyMap);
@@ -48,18 +47,20 @@ class SessionManager {
 		}
 
 		if (databaseHelper.isFilmSession(sessionID)) {
-			List<Integer> newFilmList = new ArrayList<Integer>();
+			List<Map<Integer, String>> newFilmList = new ArrayList<Map<Integer, String>>();
 			for (Integer[] tallyMap : optionsTallies) {
 				int similarPortion = ((tallyMap[1] / tallyTotal) * listTotal);
 				List<Integer> similarList = apiHelper.getSimilar(tallyMap[0]);
 				for (int i = 0; i < similarPortion; i++) {
-					newFilmList.add(similarList.get(i));
+					Map <Integer, String> tempMap = new HashMap<Integer, String>();
+					tempMap.put(similarList.get(i), apiHelper.getFilmTitle(similarList.get(i)));
+					newFilmList.add(tempMap);
 					if ((i + 1) >= similarList.size()) {
 						break;
 					}
 				}
 			}
-			databaseHelper.setFilmOptions(sessionID, newFilmList);
+			databaseHelper.setOptions(sessionID, newFilmList);
 			return -1;
 		}
 		return (greatestOption[0]);
@@ -83,13 +84,13 @@ class SessionManager {
 		return sessionID;
 	}
 
-	public int createFilmSession(int[] genres) {
-		List<Integer> filmSelections = APIHelper.getFilmList(genres);
+	public int createFilmSession(List<Integer> genres) {
+		List<Integer> filmSelections = apiHelper.getFilmList(genres);
 		List<Map<Integer, String>> options = new ArrayList<Map<Integer, String>>();
 		for (Integer option : filmSelections) {
 			Map<Integer, String> filmMap = new HashMap<Integer, String>();
 			int filmCode = option;
-			String filmTitle = APIHelper.getFilmTitle(filmCode);
+			String filmTitle = apiHelper.getFilmTitle(filmCode);
 			filmMap.put(filmCode, filmTitle);
 			options.add(filmMap);
 		}
@@ -100,6 +101,10 @@ class SessionManager {
 
 	public void newVote(int sessionID, int optionID) {
 //		databaseHelper.newVote(sessionID, optionID);
+	}
+
+	public void delVote(int sessionID, int optionID) {
+// 		databaseHelper.delVote(sessionID, optionID);
 	}
 
 //	public int getVoteTally(int sessionID, int optionID) {
