@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 
+import java.sql.*;
+
 /*
  * DATABASE SCHEMA:
  *
@@ -30,7 +32,17 @@ class DatabaseHelper {
 	 * Create new database connection
 	*/
 	public DatabaseHelper() {
-
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection connection = DriverManager.getConnection(
+				"jdbc:mysql://localhost/test", "user", "password"
+			);
+			System.out.println("Database connection successful!");
+		}
+		catch(Exception exception) {
+			System.out.println("Database connection failed. Exiting!");
+			System.exit(1);
+		}
 	}
 
 	/**
