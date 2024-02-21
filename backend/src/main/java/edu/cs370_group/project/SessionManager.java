@@ -11,8 +11,9 @@ class SessionManager {
 	public final int listTotal = 20;
 
 	// Controller provides DatabaseHelper object
-	public SessionManager(DatabaseHelper databaseHelper) {
+	public SessionManager(DatabaseHelper databaseHelper, APIHelper apiHelper) {
 		this.databaseHelper = databaseHelper;
+		this.apiHelper = apiHelper;
 	}
 
 	public int endSession(int sessionID) {

@@ -21,28 +21,22 @@ import java.util.HashMap;
 @ResponseStatus(HttpStatus.NOT_IMPLEMENTED)
 public class Controller {
 	DatabaseHelper databaseHelper = new DatabaseHelper();
-	SessionManager sessionManager = new SessionManager(databaseHelper);
+	APIHelper apiHelper = new APIHelper();
+	SessionManager sessionManager = new SessionManager(databaseHelper, apiHelper);
 
-//	public ResponseEntity<Object> test() {
-//		Person newPerson = new Person(5, 2, "John");
-//		return new ResponseEntity<>(newPerson.getMap(), HttpStatus.OK);
-//	}
-
-//	@PostMapping("/sessions/{id}")
-//	@GetMapping("/sessions/{id}")
-//	public String postTest(@PathVariable String id) {
-//		return ("{\"sessionId\":\"" + id + "\"}");
-//	}
-	
-	@RequestMapping(value = "/getSessions", produces="application/json")
+	@RequestMapping(value = "/getSessions", produces = "application/json")
 	public ResponseEntity<String> getSessions() {
 		return ResponseEntity.ok(sessionManager.getSessions());
 	}
 
 	@RequestMapping("/createGenericSession")
-	/*public int createGenericSession(@RequestParam String[] options) {
-		//return (sessionManager.createGenericSession(options));
-	}*/
+	public int createGenericSession(@RequestParam String[] options) {
+		List<String> optionList = new ArrayList<String>();
+		for (int i = 0; i < options.length; i++) {
+			optionList.add(options[i]);
+		}
+		return (sessionManager.createGenericSession(optionList));
+	}
 
 	@GetMapping("/newVote")
 	@ResponseStatus(code = HttpStatus.OK, reason = "OK")
@@ -50,9 +44,23 @@ public class Controller {
 		sessionManager.newVote(session, option);
 	}
 
-	@GetMapping("/devVote")
+	@GetMapping("/delVote")
 	@ResponseStatus(code = HttpStatus.OK, reason = "OK")
 	public void delVote(@RequestParam int session, @RequestParam int option) {
 		sessionManager.delVote(session, option);
+	}
+
+	@GetMapping(value = "/getGenreList", produces = "application/json")
+	public ResponseEntity<String> getGenreList() {
+		return ResponseEntity.ok(apiHelper.getGenreList());
+	}
+
+	@GetMapping("/createFilmSession")
+	public int createFilmSession(@RequestParam String[] genres) {
+		List<Integer> genreList = new ArrayList<Integer>();
+		for (int i = 0; i < genres.length; i++) {
+			genreList.add(Integer.valueOf(genres[i]));
+		}
+		return (sessionManager.createFilmSession(genreList));
 	}
 }
