@@ -35,7 +35,7 @@ class DatabaseHelper {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			Connection connection = DriverManager.getConnection(
-				"jdbc:mysql://localhost/test", "user", "password"
+				"jdbc:mysql://127.0.0.1/sys", "user", "password"
 			);
 			System.out.println("Database connection successful!");
 		}
