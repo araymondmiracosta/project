@@ -16,14 +16,14 @@ import java.sql.*;
  * | 110       | 0           | (0 = generic, 1 = film)
  * | 111       | 1           |
  *
- * Options
- * ---------------------------------------
- * | OptionID  | SessionID   | VoteTally |
- * |-----------|-------------|-----------|
- * | 9402      | 110         | 4         |
- * | 10        | 110         | 2         |
- * | 11        | 111         | 9         |
- * | 12        | 111         | 5         |
+ * Option
+ * -----------------------------------------------------
+ * | OptionID  | SessionID   | Description | VoteTally |
+ * |-----------|-------------|-------------|-----------|
+ * | 9402      | 110         | "Movie 1"   | 4         |
+ * | 10        | 110         | "Movie 2"   | 2         |
+ * | 11        | 111         | "Option 11" | 9         |
+ * | 12        | 111         | "Option 12" | 5         |
  *
  */
 
@@ -35,12 +35,66 @@ class DatabaseHelper {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			Connection connection = DriverManager.getConnection(
-				"jdbc:mysql://127.0.0.1/sys", "user", "password"
+				"jdbc:mysql://127.0.0.1/java", "user", "password"
 			);
 			System.out.println("Database connection successful!");
+
+			// Check that tables exist, create them if they do not
+			String tableName = "Session";
+			Boolean found = false;
+			java.sql.DatabaseMetaData databaseMetaData = connection.getMetaData();
+			ResultSet resultSet = databaseMetaData.getTables(null, null, tableName, null);
+			while (resultSet.next()) {
+				String thisName = resultSet.getString(tableName);
+				if (tableName.equals(thisName)) {
+					found = true;
+				}
+			}
+			if (!(found)) {
+				// Session table not found, so create it
+				Statement statement = connection.createStatement();
+				String sql = "CREATE TABLE Session " +
+                   "(" +
+					   "SessionID INTEGER not NULL, " +
+					   "SessionType INTEGER, " + 
+					   "PRIMARY KEY (SessionID)" +
+				   ")";
+				statement.executeUpdate(sql);
+				System.out.println("Created Session table successfully.");   	
+			}
+			else {
+				System.out.println("Session table already created.");
+			}
+
+			tableName = "Option";
+			found = false;
+			resultSet = databaseMetaData.getTables(null, null, tableName, null);
+			while (resultSet.next()) {
+				String thisName = resultSet.getString(tableName);
+				if (tableName.equals(thisName)) {
+					found = true;
+				}
+			}
+			if (!(found)) {
+				// Option table not found, so create it
+				Statement statement = connection.createStatement();
+				String sql = "CREATE TABLE Option" +
+					"(" +
+						"OptionID INTEGER not NULL, " +
+						"SessionID INTEGER, " +
+						"Description VARCHAR(255), " +
+						"VoteTally INTEGER, " +
+						"PRIMARY KEY (OptionID,SessionID)" +
+					")";
+				statement.executeUpdate(sql);
+				System.out.println("Created Option table successfully.");
+			}
+			else {
+				System.out.println("Option table already created.");
+			}
 		}
 		catch(Exception exception) {
-			System.out.println("Database connection failed. Exiting!");
+			System.out.println("Database connection or initialization failed. Exiting!");
 			System.out.println(exception.toString());
 			System.exit(1);
 		}
