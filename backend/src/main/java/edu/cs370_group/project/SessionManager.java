@@ -111,8 +111,44 @@ class SessionManager {
 //	public int getVoteTally(int sessionID, int optionID) {
 //		return (databaseHelper.getVoteTally(sessionID, optionID));
 //	}
+	
+	public String getSessionInfo(int sessionID) {
+		String output = "";
 
-	// Prints out information for each session and its options
+//		Boolean isFilmSession = databaseHelper.isFilmSession(sessionID);
+		Boolean isFilmSession = true;
+
+//		List<Integer> optionList = databaseHelper.getOptions(sessionID);
+		List<Integer> optionList = new ArrayList<Integer>();
+
+		for (int i = 0; i < 5; i++) {
+			optionList.add(Integer.valueOf(i));
+		}
+
+		output += "{\n\t\"sessionID\": " + sessionID + ",\n\t\"isFilmSession\": " + isFilmSession.toString() + ",\n\t\"options\": [\n";
+
+		for (Integer option : optionList) {
+//			int voteTally = databaseHelper.getOptionVoteTally(session, option);
+			int voteTally = 5;
+//			String optionDescription = databaseHelper.getOptionDescription(session, option);
+			String optionDescription = "Description text";
+
+
+			output += "\t\t{\n\t\t\t\"optionID\": " + option.toString() + ",\n\t\t\t\"description\": \"" + optionDescription + "\",\n\t\t\t\"voteTally\": " + voteTally + "\n\t\t}";
+
+			if (!(option.equals(optionList.getLast()))) {
+				output += ",";
+			}
+
+			output += "\n";
+		}
+		output += "\t]\n}";
+		output += "\n";
+		
+		return output;
+	}
+
+/*	// Prints out information for each session and its options
 	public String getSessions() {
 		String output = "";
 //		List<Integer> sessionList = databaseHelper.getSessions();
@@ -155,5 +191,5 @@ class SessionManager {
 		output += "    ]\n}\n";
 		
 		return output;
-	}
+	} */
 }

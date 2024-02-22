@@ -44,11 +44,8 @@ class DatabaseHelper {
 			Boolean found = false;
 			java.sql.DatabaseMetaData databaseMetaData = connection.getMetaData();
 			ResultSet resultSet = databaseMetaData.getTables(null, null, tableName, null);
-			while (resultSet.next()) {
-				String thisName = resultSet.getString(tableName);
-				if (tableName.equals(thisName)) {
-					found = true;
-				}
+			if (resultSet.next()) {
+				found = true;
 			}
 			if (!(found)) {
 				// Session table not found, so create it
@@ -69,11 +66,8 @@ class DatabaseHelper {
 			tableName = "Option";
 			found = false;
 			resultSet = databaseMetaData.getTables(null, null, tableName, null);
-			while (resultSet.next()) {
-				String thisName = resultSet.getString(tableName);
-				if (tableName.equals(thisName)) {
-					found = true;
-				}
+			if (resultSet.next()) {
+				found = true;
 			}
 			if (!(found)) {
 				// Option table not found, so create it
@@ -94,7 +88,7 @@ class DatabaseHelper {
 			}
 		}
 		catch(Exception exception) {
-			System.out.println("Database connection or initialization failed. Exiting!");
+			System.out.println("Database connection or initialization failed. Exiting.");
 			System.out.println(exception.toString());
 			System.exit(1);
 		}
