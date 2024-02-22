@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    coming soon hello poop
+    coming soon hello world 
   </div>
 </template>
 
