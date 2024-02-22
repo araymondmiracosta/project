@@ -41,6 +41,7 @@ class DatabaseHelper {
 		}
 		catch(Exception exception) {
 			System.out.println("Database connection failed. Exiting!");
+			System.out.println(exception.toString());
 			System.exit(1);
 		}
 	}
