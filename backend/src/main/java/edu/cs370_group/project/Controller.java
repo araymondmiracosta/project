@@ -24,19 +24,24 @@ public class Controller {
 		return ResponseEntity.ok(sessionManager.getSessions());
 	} */
 
-	@RequestMapping(value = "/getSessionInfo", produces = "application/json")
+	@GetMapping(value = "/getSessionInfo", produces = "application/json")
 	public String getSessionInfo(@RequestParam int session) {
 		return (sessionManager.getSessionInfo(session));
 	}
 
 
-	@RequestMapping("/createGenericSession")
-	public int createGenericSession(@RequestParam String[] options) {
+	@GetMapping(value = "/createGenericSession", produces = "application/json")
+	public String createGenericSession(@RequestParam String[] options) {
 		List<String> optionList = new ArrayList<String>();
 		for (int i = 0; i < options.length; i++) {
 			optionList.add(options[i]);
 		}
-		return (sessionManager.createGenericSession(optionList));
+	 	return (sessionManager.createGenericSession(optionList));
+	}
+
+	@GetMapping(value = "/endSession", produces = "application/json")
+	public String endSession(@RequestParam int session) {
+		return (sessionManager.endSession(session));
 	}
 
 	@GetMapping("/newVote")
@@ -57,7 +62,7 @@ public class Controller {
 	}
 
 	@GetMapping("/createFilmSession")
-	public int createFilmSession(@RequestParam String[] genres) {
+	public String createFilmSession(@RequestParam String[] genres) {
 		List<Integer> genreList = new ArrayList<Integer>();
 		for (int i = 0; i < genres.length; i++) {
 			genreList.add(Integer.valueOf(genres[i]));

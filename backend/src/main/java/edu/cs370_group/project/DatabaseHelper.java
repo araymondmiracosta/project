@@ -28,13 +28,14 @@ import java.sql.*;
  */
 
 class DatabaseHelper {
+	Connection connection;
 	/**
 	 * Create new database connection
 	*/
 	public DatabaseHelper() {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
-			Connection connection = DriverManager.getConnection(
+			this.connection = DriverManager.getConnection(
 				"jdbc:mysql://127.0.0.1/java", "user", "password"
 			);
 			System.out.println("Database connection successful!");
@@ -117,7 +118,18 @@ class DatabaseHelper {
 	 * 					   selection
 	*/
 	public void createSession(int sessionID, List<Map<Integer, String>> options, Boolean isFilmSession) {
-		setOptions(sessionID, options);
+		int isFilmSessionInteger = isFilmSession ? 1 : 0;
+		try {
+			Statement statement = connection.createStatement();
+			String sql = "INSERT INTO Session (SessionID, SessionType) " +
+				   		 "VALUES (" + sessionID + ", " + isFilmSessionInteger + ")";
+			statement.executeUpdate(sql);
+			System.out.println("New session added to Session table.");
+			setOptions(sessionID, options);
+		}
+		catch (Exception exception) {
+			System.out.println(exception.toString());
+		}
 	}
 
 	/**
@@ -127,7 +139,22 @@ class DatabaseHelper {
 	 * @param sessionID The session ID to remove
 	*/
 	public void endSession(int sessionID) {
+		try {
+			Statement statement;
+			String sql;
+			statement = connection.createStatement();
+			sql = "DELETE FROM Option WHERE SessionID=" + sessionID;
+			statement.executeUpdate(sql);
+			System.out.println("Options deleted for sessionID: " + sessionID);
 
+			statement = connection.createStatement();
+			sql = "DELETE FROM Session WHERE SessionID=" + sessionID;
+			statement.executeUpdate(sql);
+			System.out.println("Session deleted for sessionID: " + sessionID);
+		}
+		catch (Exception exception) {
+			System.out.println(exception.toString());
+		}
 	}
 
 	/**
@@ -177,6 +204,20 @@ class DatabaseHelper {
 	 * @param list The list containing the options with their IDs and descriptions
 	 */
 	public void setOptions(int sessionID, List<Map<Integer, String>> list) {
+		try {
+			for (Map<Integer, String> optionMap : list) {
+				int optionID = optionMap.entrySet().iterator().next().getKey();
+				String description = optionMap.entrySet().iterator().next().getValue(); // I love Java :P
+				Statement statement = connection.createStatement();
+				String sql = "INSERT INTO Option (OptionID, SessionID, Description, VoteTally) " +
+							 "VALUES (" + optionID + ", " + sessionID + ", \'" + description + "\', " + 0 + ")";
+				statement.executeUpdate(sql);
+			}
+			System.out.println("New options added to Option table.");
+		}
+		catch (Exception exception) {
+			System.out.println(exception.toString());
+		}
 	}
 
 	/**
