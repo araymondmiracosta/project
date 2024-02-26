@@ -100,11 +100,11 @@ class DatabaseHelper {
 	 *
 	 * @return The list
 	*/
-	public List<Integer> getSessions() {
-		ArrayList<Integer> sessionList = new ArrayList<Integer>();
-
-		return sessionList;
-	}
+//	public List<Integer> getSessions() {
+//		ArrayList<Integer> sessionList = new ArrayList<Integer>();
+//
+//		return sessionList;
+//	}
 
 	/**
 	 * Creates a new entry in the Session table
@@ -178,7 +178,20 @@ class DatabaseHelper {
 	 * @return The vote tally for the option
 	*/
 	public int getOptionVoteTally(int sessionID, int optionID) {
-		int voteTally = 0;
+		int voteTally = -1;
+		try {
+			Statement statement;
+			String sql;
+			statement = connection.createStatement();
+			sql = "SELECT OptionID, SessionID, VoteTally FROM Option WHERE OptionID=" + optionID + " AND SessionID=" + sessionID;
+			ResultSet resultSet = statement.executeQuery(sql);
+			while (resultSet.next()) {
+				voteTally = resultSet.getInt("VoteTally");
+			}
+		}
+		catch (Exception exception) {
+			System.out.println(exception.toString());
+		}
 
 		return voteTally;
 	}

@@ -145,15 +145,14 @@ class SessionManager {
 //		List<Integer> optionList = databaseHelper.getOptions(sessionID);
 		List<Integer> optionList = new ArrayList<Integer>();
 
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 2; i++) {
 			optionList.add(Integer.valueOf(i));
 		}
 
 		output += "{\n\t\"sessionID\": " + sessionID + ",\n\t\"isFilmSession\": " + isFilmSession.toString() + ",\n\t\"options\": [\n";
 
 		for (Integer option : optionList) {
-//			int voteTally = databaseHelper.getOptionVoteTally(session, option);
-			int voteTally = 5;
+			int voteTally = databaseHelper.getOptionVoteTally(sessionID, option);
 //			String optionDescription = databaseHelper.getOptionDescription(session, option);
 			String optionDescription = "Description text";
 
