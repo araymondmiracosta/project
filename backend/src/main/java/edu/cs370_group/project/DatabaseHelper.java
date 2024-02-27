@@ -16,7 +16,7 @@ import java.sql.*;
  * | 110       | 0           | (0 = generic, 1 = film)
  * | 111       | 1           |
  *
- * Option
+ * TallyOptionTable
  * -----------------------------------------------------
  * | OptionID  | SessionID   | Description | VoteTally |
  * |-----------|-------------|-------------|-----------|
@@ -64,7 +64,7 @@ class DatabaseHelper {
 				System.out.println("Session table already created.");
 			}
 
-			tableName = "Option";
+			tableName = "TallyOptionTable";
 			found = false;
 			resultSet = databaseMetaData.getTables(null, null, tableName, null);
 			if (resultSet.next()) {
@@ -73,7 +73,7 @@ class DatabaseHelper {
 			if (!(found)) {
 				// Option table not found, so create it
 				Statement statement = connection.createStatement();
-				String sql = "CREATE TABLE Option" +
+				String sql = "CREATE TABLE TallyOptionTable" +
 					"(" +
 						"OptionID INTEGER not NULL, " +
 						"SessionID INTEGER, " +
@@ -82,10 +82,10 @@ class DatabaseHelper {
 						"PRIMARY KEY (OptionID,SessionID)" +
 					")";
 				statement.executeUpdate(sql);
-				System.out.println("Created Option table successfully.");
+				System.out.println("Created TallyOptionTable table successfully.");
 			}
 			else {
-				System.out.println("Option table already created.");
+				System.out.println("TableOptionTable table already created.");
 			}
 		}
 		catch(Exception exception) {
@@ -143,7 +143,7 @@ class DatabaseHelper {
 			Statement statement;
 			String sql;
 			statement = connection.createStatement();
-			sql = "DELETE FROM Option WHERE SessionID=" + sessionID;
+			sql = "DELETE FROM TallyOptionTable WHERE SessionID=" + sessionID;
 			statement.executeUpdate(sql);
 			System.out.println("Options deleted for sessionID: " + sessionID);
 
@@ -183,7 +183,7 @@ class DatabaseHelper {
 			Statement statement;
 			String sql;
 			statement = connection.createStatement();
-			sql = "SELECT OptionID, SessionID, VoteTally FROM Option WHERE OptionID=" + optionID + " AND SessionID=" + sessionID;
+			sql = "SELECT OptionID, SessionID, VoteTally FROM TallyOptionTable WHERE OptionID=" + optionID + " AND SessionID=" + sessionID;
 			ResultSet resultSet = statement.executeQuery(sql);
 			while (resultSet.next()) {
 				voteTally = resultSet.getInt("VoteTally");
@@ -222,7 +222,7 @@ class DatabaseHelper {
 				int optionID = optionMap.entrySet().iterator().next().getKey();
 				String description = optionMap.entrySet().iterator().next().getValue(); // I love Java :P
 				Statement statement = connection.createStatement();
-				String sql = "INSERT INTO Option (OptionID, SessionID, Description, VoteTally) " +
+				String sql = "INSERT INTO TallyOptionTable (OptionID, SessionID, Description, VoteTally) " +
 							 "VALUES (" + optionID + ", " + sessionID + ", \'" + description + "\', " + 0 + ")";
 				statement.executeUpdate(sql);
 			}
