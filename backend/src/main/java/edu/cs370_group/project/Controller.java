@@ -3,18 +3,13 @@ package edu.cs370_group.project;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
 
 @org.springframework.stereotype.Controller
 @ResponseBody
@@ -24,18 +19,29 @@ public class Controller {
 	APIHelper apiHelper = new APIHelper();
 	SessionManager sessionManager = new SessionManager(databaseHelper, apiHelper);
 
-	@RequestMapping(value = "/getSessions", produces = "application/json")
+/*	@RequestMapping(value = "/getSessions", produces = "application/json")
 	public ResponseEntity<String> getSessions() {
 		return ResponseEntity.ok(sessionManager.getSessions());
+	} */
+
+	@GetMapping(value = "/getSessionInfo", produces = "application/json")
+	public String getSessionInfo(@RequestParam int session) {
+		return (sessionManager.getSessionInfo(session));
 	}
 
-	@RequestMapping("/createGenericSession")
-	public int createGenericSession(@RequestParam String[] options) {
+
+	@GetMapping(value = "/createGenericSession", produces = "application/json")
+	public String createGenericSession(@RequestParam String[] options) {
 		List<String> optionList = new ArrayList<String>();
 		for (int i = 0; i < options.length; i++) {
 			optionList.add(options[i]);
 		}
-		return (sessionManager.createGenericSession(optionList));
+	 	return (sessionManager.createGenericSession(optionList));
+	}
+
+	@GetMapping(value = "/endSession", produces = "application/json")
+	public String endSession(@RequestParam int session) {
+		return (sessionManager.endSession(session));
 	}
 
 	@GetMapping("/newVote")
@@ -56,7 +62,7 @@ public class Controller {
 	}
 
 	@GetMapping("/createFilmSession")
-	public int createFilmSession(@RequestParam String[] genres) {
+	public String createFilmSession(@RequestParam String[] genres) {
 		List<Integer> genreList = new ArrayList<Integer>();
 		for (int i = 0; i < genres.length; i++) {
 			genreList.add(Integer.valueOf(genres[i]));

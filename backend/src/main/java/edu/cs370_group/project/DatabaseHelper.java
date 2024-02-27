@@ -16,31 +16,80 @@ import java.sql.*;
  * | 110       | 0           | (0 = generic, 1 = film)
  * | 111       | 1           |
  *
- * Options
- * ---------------------------------------
- * | OptionID  | SessionID   | VoteTally |
- * |-----------|-------------|-----------|
- * | 9402      | 110         | 4         |
- * | 10        | 110         | 2         |
- * | 11        | 111         | 9         |
- * | 12        | 111         | 5         |
+ * Option
+ * -----------------------------------------------------
+ * | OptionID  | SessionID   | Description | VoteTally |
+ * |-----------|-------------|-------------|-----------|
+ * | 9402      | 110         | "Movie 1"   | 4         |
+ * | 10        | 110         | "Movie 2"   | 2         |
+ * | 11        | 111         | "Option 11" | 9         |
+ * | 12        | 111         | "Option 12" | 5         |
  *
  */
 
 class DatabaseHelper {
+	Connection connection;
 	/**
 	 * Create new database connection
 	*/
 	public DatabaseHelper() {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
-			Connection connection = DriverManager.getConnection(
-				"jdbc:mysql://127.0.0.1/sys", "user", "password"
+			this.connection = DriverManager.getConnection(
+				"jdbc:mysql://127.0.0.1/java", "user", "password"
 			);
 			System.out.println("Database connection successful!");
+
+			// Check that tables exist, create them if they do not
+			String tableName = "Session";
+			Boolean found = false;
+			java.sql.DatabaseMetaData databaseMetaData = connection.getMetaData();
+			ResultSet resultSet = databaseMetaData.getTables(null, null, tableName, null);
+			if (resultSet.next()) {
+				found = true;
+			}
+			if (!(found)) {
+				// Session table not found, so create it
+				Statement statement = connection.createStatement();
+				String sql = "CREATE TABLE Session " +
+                   "(" +
+					   "SessionID INTEGER not NULL, " +
+					   "SessionType INTEGER, " + 
+					   "PRIMARY KEY (SessionID)" +
+				   ")";
+				statement.executeUpdate(sql);
+				System.out.println("Created Session table successfully.");   	
+			}
+			else {
+				System.out.println("Session table already created.");
+			}
+
+			tableName = "Option";
+			found = false;
+			resultSet = databaseMetaData.getTables(null, null, tableName, null);
+			if (resultSet.next()) {
+				found = true;
+			}
+			if (!(found)) {
+				// Option table not found, so create it
+				Statement statement = connection.createStatement();
+				String sql = "CREATE TABLE Option" +
+					"(" +
+						"OptionID INTEGER not NULL, " +
+						"SessionID INTEGER, " +
+						"Description VARCHAR(255), " +
+						"VoteTally INTEGER, " +
+						"PRIMARY KEY (OptionID,SessionID)" +
+					")";
+				statement.executeUpdate(sql);
+				System.out.println("Created Option table successfully.");
+			}
+			else {
+				System.out.println("Option table already created.");
+			}
 		}
 		catch(Exception exception) {
-			System.out.println("Database connection failed. Exiting!");
+			System.out.println("Database connection or initialization failed. Exiting.");
 			System.out.println(exception.toString());
 			System.exit(1);
 		}
@@ -51,11 +100,11 @@ class DatabaseHelper {
 	 *
 	 * @return The list
 	*/
-	public List<Integer> getSessions() {
-		ArrayList<Integer> sessionList = new ArrayList<Integer>();
-
-		return sessionList;
-	}
+//	public List<Integer> getSessions() {
+//		ArrayList<Integer> sessionList = new ArrayList<Integer>();
+//
+//		return sessionList;
+//	}
 
 	/**
 	 * Creates a new entry in the Session table
@@ -69,7 +118,18 @@ class DatabaseHelper {
 	 * 					   selection
 	*/
 	public void createSession(int sessionID, List<Map<Integer, String>> options, Boolean isFilmSession) {
-		setOptions(sessionID, options);
+		int isFilmSessionInteger = isFilmSession ? 1 : 0;
+		try {
+			Statement statement = connection.createStatement();
+			String sql = "INSERT INTO Session (SessionID, SessionType) " +
+				   		 "VALUES (" + sessionID + ", " + isFilmSessionInteger + ")";
+			statement.executeUpdate(sql);
+			System.out.println("New session added to Session table.");
+			setOptions(sessionID, options);
+		}
+		catch (Exception exception) {
+			System.out.println(exception.toString());
+		}
 	}
 
 	/**
@@ -79,7 +139,22 @@ class DatabaseHelper {
 	 * @param sessionID The session ID to remove
 	*/
 	public void endSession(int sessionID) {
+		try {
+			Statement statement;
+			String sql;
+			statement = connection.createStatement();
+			sql = "DELETE FROM Option WHERE SessionID=" + sessionID;
+			statement.executeUpdate(sql);
+			System.out.println("Options deleted for sessionID: " + sessionID);
 
+			statement = connection.createStatement();
+			sql = "DELETE FROM Session WHERE SessionID=" + sessionID;
+			statement.executeUpdate(sql);
+			System.out.println("Session deleted for sessionID: " + sessionID);
+		}
+		catch (Exception exception) {
+			System.out.println(exception.toString());
+		}
 	}
 
 	/**
@@ -103,7 +178,20 @@ class DatabaseHelper {
 	 * @return The vote tally for the option
 	*/
 	public int getOptionVoteTally(int sessionID, int optionID) {
-		int voteTally = 0;
+		int voteTally = -1;
+		try {
+			Statement statement;
+			String sql;
+			statement = connection.createStatement();
+			sql = "SELECT OptionID, SessionID, VoteTally FROM Option WHERE OptionID=" + optionID + " AND SessionID=" + sessionID;
+			ResultSet resultSet = statement.executeQuery(sql);
+			while (resultSet.next()) {
+				voteTally = resultSet.getInt("VoteTally");
+			}
+		}
+		catch (Exception exception) {
+			System.out.println(exception.toString());
+		}
 
 		return voteTally;
 	}
@@ -129,6 +217,20 @@ class DatabaseHelper {
 	 * @param list The list containing the options with their IDs and descriptions
 	 */
 	public void setOptions(int sessionID, List<Map<Integer, String>> list) {
+		try {
+			for (Map<Integer, String> optionMap : list) {
+				int optionID = optionMap.entrySet().iterator().next().getKey();
+				String description = optionMap.entrySet().iterator().next().getValue(); // I love Java :P
+				Statement statement = connection.createStatement();
+				String sql = "INSERT INTO Option (OptionID, SessionID, Description, VoteTally) " +
+							 "VALUES (" + optionID + ", " + sessionID + ", \'" + description + "\', " + 0 + ")";
+				statement.executeUpdate(sql);
+			}
+			System.out.println("New options added to Option table.");
+		}
+		catch (Exception exception) {
+			System.out.println(exception.toString());
+		}
 	}
 
 	/**
