@@ -18,11 +18,11 @@ class SessionManager {
 	}
 
 	public String endSession(int sessionID) {
-		databaseHelper.endSession(sessionID);
 		String response = "{\n";
 		response += "\t\"consensus\": false,\n";
-		response += "\t\"winningOption\": 0\n";
+		response += getOptionsJSON(sessionID);
 		response += "}";
+		databaseHelper.endSession(sessionID);
 		return response;
 //		double majority = 0.60;
 //		int tallyTotal = 0;
@@ -47,8 +47,9 @@ class SessionManager {
 //			int optionTally = tallyMap[1];
 //			if ((optionTally / tallyTotal) >= majority) {
 //				response += "\t\"consensus\": true,\n"
-//				response += "\t\"winningOption\": " + optionID + "\n";
+//				response += getOptionsJSON(sessionID);
 //				response += "}";
+//				databaseHelper.endSession(sessionID);
 //				return response;
 //			}
 //			if (optionTally > greatestOption[1]) {
@@ -73,13 +74,16 @@ class SessionManager {
 //			}
 //			databaseHelper.setOptions(sessionID, newFilmList);
 //			response += "\t\"consensus\": false,\n"
-//			response += "\t\"winningOption\": " + 0 + "\n";
+//			response += getOptionsJSON(sessionID);
 //			response += "}";
+//			databaseHelper.endSession(sessionID);
 //			return response;
 //		}
 //		response += "\t\"consensus\": true,\n"
 //		response += "\t\"winningOption\": " + greatestOption[0] + "\n";
+//		response += getOptionsJSON(sessionID);
 //		response += "}";
+//		databaseHelper.endSession(sessionID);
 //		return response;
 
 	}
@@ -136,6 +140,37 @@ class SessionManager {
 //		return (databaseHelper.getVoteTally(sessionID, optionID));
 //	}
 	
+	public String getOptionsJSON(int sessionID) {
+		String response = "";
+
+//		List<Integer> optionList = databaseHelper.getOptions(sessionID);
+		List<Integer> optionList = new ArrayList<Integer>();
+
+		for (int i = 0; i < 2; i++) {
+			optionList.add(Integer.valueOf(i));
+		}
+
+		response += "\n\t\"options\": [\n";
+
+		for (Integer option : optionList) {
+			int voteTally = databaseHelper.getOptionVoteTally(sessionID, option);
+//			String optionDescription = databaseHelper.getOptionDescription(session, option);
+			String optionDescription = "Description text";
+
+
+			response += "\t\t{\n\t\t\t\"optionID\": " + option.toString() + ",\n\t\t\t\"description\": \"" + optionDescription + "\",\n\t\t\t\"voteTally\": " + voteTally + "\n\t\t}";
+
+			if (!(option.equals(optionList.getLast()))) {
+				response += ",";
+			}
+
+			response += "\n";
+		}
+		response += "\t]\n";
+
+		return response;
+	}
+	
 	public String getSessionInfo(int sessionID) {
 		String output = "";
 
@@ -149,23 +184,10 @@ class SessionManager {
 			optionList.add(Integer.valueOf(i));
 		}
 
-		output += "{\n\t\"sessionID\": " + sessionID + ",\n\t\"isFilmSession\": " + isFilmSession.toString() + ",\n\t\"options\": [\n";
+		output += "{\n\t\"sessionID\": " + sessionID + ",\n\t\"isFilmSession\": " + isFilmSession.toString() + ",\n";
 
-		for (Integer option : optionList) {
-			int voteTally = databaseHelper.getOptionVoteTally(sessionID, option);
-//			String optionDescription = databaseHelper.getOptionDescription(session, option);
-			String optionDescription = "Description text";
-
-
-			output += "\t\t{\n\t\t\t\"optionID\": " + option.toString() + ",\n\t\t\t\"description\": \"" + optionDescription + "\",\n\t\t\t\"voteTally\": " + voteTally + "\n\t\t}";
-
-			if (!(option.equals(optionList.getLast()))) {
-				output += ",";
-			}
-
-			output += "\n";
-		}
-		output += "\t]\n}";
+		output += getOptionsJSON(sessionID);
+		output += "\n}";
 		output += "\n";
 		
 		return output;

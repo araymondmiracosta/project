@@ -1,0 +1,121 @@
+createFilmSession
+	description: Creates a new session with user-supplied genre options
+	params: genres[]
+	example query:http://localhost:8080/createGenericSession?                 genres=102,103,108
+	example return:
+		{
+  			"sessionID": 2883919191
+		}
+
+
+createGenericSession
+	description: Creates a new session with user-supplied options
+	params: options[]
+	example query: http://localhost:8080/createGenericSession?options=Option%201,Option%202,Option%203
+	example return:
+		{
+  			"sessionID": 1071786101
+		}
+
+
+delVote
+	description: Removes a vote from the given option in the given session
+	params: session, option
+	example query: http://localhost:8080/delVote?session=862656864&&option=1
+
+
+endSession
+	description: Ends the given session and returns the final vote tally
+	params: session
+	example query: http://localhost:8080/endSession?session=1071786101
+	example return:
+		{
+		  "consensus": false,
+		  "options": [
+			{
+			  "optionID": 0,
+			  "description": "Description text",
+			  "voteTally": 7
+			},
+			{
+			  "optionID": 1,
+			  "description": "Description text",
+			  "voteTally": 0
+			}
+		  ]
+		}
+
+
+getGenreList
+	description: Get the list of genre codes and names
+	example query: http://localhost:8080/getGenreList
+	example return:
+		{
+		  "genres": [
+			{
+			  "id": 28,
+			  "name": "Action"
+			},
+			{
+			  "id": 36,
+			  "name": "Historie"
+			},
+			{
+			  "id": 27,
+			  "name": "Horror"
+			},
+			{
+			  "id": 10402,
+			  "name": "Musik"
+			},
+			{
+			  "id": 9648,
+			  "name": "Mystery"
+			},
+			{
+			  "id": 878,
+			  "name": "Science Fiction"
+			},
+			{
+			  "id": 10770,
+			  "name": "TV-Film"
+			},
+			{
+			  "id": 53,
+			  "name": "Thriller"
+			},
+			{
+			  "id": 37,
+			  "name": "Western"
+			}
+		  ]
+		}
+
+
+getSessionInfo
+	description: Get information about the given session
+	params: session
+	example query: http://localhost:8080/getSessionInfo?session=862656864
+	example return:
+		{
+		  "sessionID": 862656864,
+		  "isFilmSession": true,
+		  "options": [
+			{
+			  "optionID": 0,
+			  "description": "Description text",
+			  "voteTally": 5
+			},
+			{
+			  "optionID": 1,
+			  "description": "Description text",
+			  "voteTally": 3
+			}
+		  ]
+		}
+
+
+newVote
+	description: Casts a new vote for the given option in the given session
+	params: session, option
+	example query: http://localhost:8080/newVote?session=862656864&&option=1
