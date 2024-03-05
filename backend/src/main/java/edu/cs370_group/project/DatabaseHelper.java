@@ -73,7 +73,7 @@ class DatabaseHelper {
 			if (!(found)) {
 				// Option table not found, so create it
 				Statement statement = connection.createStatement();
-				String sql = "CREATE TABLE Option" +
+				String sql = "CREATE TABLE magicpoop" +
 					"(" +
 						"OptionID INTEGER not NULL, " +
 						"SessionID INTEGER, " +
