@@ -12,9 +12,19 @@ class SessionManager {
 	public final int listTotal = 20;
 
 	// Controller provides DatabaseHelper object
-	public SessionManager(DatabaseHelper databaseHelper, APIHelper apiHelper) {
+	public SessionManager(DatabaseHelper databaseHelper, APIHelper apiHelper) throws Exception {
 		this.databaseHelper = databaseHelper;
 		this.apiHelper = apiHelper;
+		
+		// Testing
+//		ArrayList<Integer> list = new ArrayList<Integer>();
+//		list.add(28);
+//		list.add(16);
+//		list.add(18);
+//		for (Integer item : apiHelper.getFilmList(list)) {
+//			System.out.println(item + "  :  " + apiHelper.getFilmTitle(item));
+//		}
+//		System.exit(0);
 	}
 
 	public String endSession(int sessionID) {
@@ -110,7 +120,7 @@ class SessionManager {
 		return response;
 	}
 
-	public String createFilmSession(List<Integer> genres) {
+	public String createFilmSession(List<Integer> genres) throws Exception {
 		List<Integer> filmSelections = apiHelper.getFilmList(genres);
 		List<Map<Integer, String>> options = new ArrayList<Map<Integer, String>>();
 		for (Integer option : filmSelections) {
@@ -120,7 +130,6 @@ class SessionManager {
 			filmMap.put(filmCode, filmTitle);
 			options.add(filmMap);
 		}
-
 		int sessionID = createSession(options, true);
 
 		String response = "";

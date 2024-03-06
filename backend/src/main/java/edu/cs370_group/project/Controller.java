@@ -3,11 +3,9 @@ package edu.cs370_group.project;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
 import java.util.List;
 import java.util.ArrayList;
 
@@ -15,9 +13,20 @@ import java.util.ArrayList;
 @ResponseBody
 @ResponseStatus(HttpStatus.NOT_IMPLEMENTED)
 public class Controller {
-	DatabaseHelper databaseHelper = new DatabaseHelper();
-	APIHelper apiHelper = new APIHelper();
-	SessionManager sessionManager = new SessionManager(databaseHelper, apiHelper);
+	DatabaseHelper databaseHelper = null;
+	APIHelper apiHelper = null;
+	SessionManager sessionManager = null;
+	public Controller() {
+		try {
+			databaseHelper = new DatabaseHelper();
+			apiHelper = new APIHelper();
+			sessionManager = new SessionManager(databaseHelper, apiHelper);
+		}
+		catch (Exception exception) {
+			System.out.println(exception);
+			System.exit(1);
+		}
+	}
 
 /*	@RequestMapping(value = "/getSessions", produces = "application/json")
 	public ResponseEntity<String> getSessions() {
@@ -62,7 +71,7 @@ public class Controller {
 	}
 
 	@GetMapping("/createFilmSession")
-	public String createFilmSession(@RequestParam String[] genres) {
+	public String createFilmSession(@RequestParam String[] genres) throws Exception {
 		List<Integer> genreList = new ArrayList<Integer>();
 		for (int i = 0; i < genres.length; i++) {
 			genreList.add(Integer.valueOf(genres[i]));

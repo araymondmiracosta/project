@@ -89,8 +89,8 @@ class DatabaseHelper {
 			}
 		}
 		catch(Exception exception) {
-			System.out.println("Database connection or initialization failed. Exiting.");
-			System.out.println(exception.toString());
+			System.out.println("Database connection or initialization failed. Is the database running? Exiting.");
+			System.out.println(exception);
 			System.exit(1);
 		}
 	}
@@ -128,7 +128,7 @@ class DatabaseHelper {
 			setOptions(sessionID, options);
 		}
 		catch (Exception exception) {
-			System.out.println(exception.toString());
+			System.out.println(exception);
 		}
 	}
 
@@ -153,7 +153,7 @@ class DatabaseHelper {
 			System.out.println("Session deleted for sessionID: " + sessionID);
 		}
 		catch (Exception exception) {
-			System.out.println(exception.toString());
+			System.out.println(exception);
 		}
 	}
 
@@ -190,7 +190,7 @@ class DatabaseHelper {
 			}
 		}
 		catch (Exception exception) {
-			System.out.println(exception.toString());
+			System.out.println(exception);
 		}
 
 		return voteTally;
@@ -229,7 +229,7 @@ class DatabaseHelper {
 			System.out.println("New options added to Option table.");
 		}
 		catch (Exception exception) {
-			System.out.println(exception.toString());
+			System.out.println(exception);
 		}
 	}
 
