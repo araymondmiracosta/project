@@ -1,7 +1,7 @@
 createFilmSession
 	description: Creates a new session with user-supplied genre options
 	params: genres[]
-	example query:http://localhost:8080/createGenericSession?                 genres=102,103,108
+	example query:http://localhost:8080/createGenericSession?genres=102,103,108
 	example return:
 		{
   			"sessionID": 2883919191
