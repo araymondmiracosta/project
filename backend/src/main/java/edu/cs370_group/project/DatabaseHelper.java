@@ -43,7 +43,7 @@ class DatabaseHelper {
 			// Check that tables exist, create them if they do not
 			String tableName = "Session";
 			Boolean found = false;
-			java.sql.DatabaseMetaData databaseMetaData = connection.getMetaData();
+			DatabaseMetaData databaseMetaData = connection.getMetaData();
 			ResultSet resultSet = databaseMetaData.getTables(null, null, tableName, null);
 			if (resultSet.next()) {
 				found = true;
@@ -264,6 +264,22 @@ class DatabaseHelper {
 	 * @return The description
 	*/
 	public String getOptionDescription(int sessionID, int optionID) {
-		return "";
+		String Description = "";
+		try {
+			Statement statement;
+			String sql;
+			statement = connection.createStatement();
+			sql = "SELECT OptionID, SessionID, Description FROM TallyOptionTable WHERE OptionID=" + optionID + " AND SessionID=" + sessionID;
+			ResultSet resultSet = statement.executeQuery(sql);
+			while (resultSet.next()) {
+				Description = resultSet.getString("Description");
+				//voteTally = resultSet.getInt("VoteTally");
+			}
+		}
+		catch (Exception exception) {
+			System.out.println(exception.toString());
+		}
+
+		return Description;
 	}
 }
