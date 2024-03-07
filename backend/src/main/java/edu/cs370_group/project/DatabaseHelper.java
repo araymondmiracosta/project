@@ -165,7 +165,16 @@ class DatabaseHelper {
 	 * @param optionID The option ID
 	*/
 	public void newVote(int sessionID, int optionID) {
-
+		try{
+			Statement statement;
+			String sql;
+			statement = connection.createStatement();
+			sql = "UPDATE TallyOptionTable SET VoteTally = VoteTally + 1 WHERE OptionID=" + optionID + " AND SessionID=" + sessionID;
+			statement.executeUpdate(sql);
+		}
+		catch (Exception exception) {
+			System.out.println(exception.toString());
+		}
 	}
 
 	/**
@@ -220,7 +229,7 @@ class DatabaseHelper {
 		try {
 			for (Map<Integer, String> optionMap : list) {
 				int optionID = optionMap.entrySet().iterator().next().getKey();
-				String description = optionMap.entrySet().iterator().next().getValue(); // I love Java :P
+				String description = optionMap.entrySet().iterator().next().getValue(); // I love Java :P (SAME)
 				Statement statement = connection.createStatement();
 				String sql = "INSERT INTO TallyOptionTable (OptionID, SessionID, Description, VoteTally) " +
 							 "VALUES (" + optionID + ", " + sessionID + ", \'" + description + "\', " + 0 + ")";
