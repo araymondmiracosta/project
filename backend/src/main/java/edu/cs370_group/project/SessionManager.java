@@ -138,7 +138,7 @@ class SessionManager {
 	}
 
 	public void newVote(int sessionID, int optionID) {
-//		databaseHelper.newVote(sessionID, optionID);
+		databaseHelper.newVote(sessionID, optionID);
 	}
 
 	public void delVote(int sessionID, int optionID) {

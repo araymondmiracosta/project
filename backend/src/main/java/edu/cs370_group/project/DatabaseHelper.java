@@ -43,7 +43,7 @@ class DatabaseHelper {
 			// Check that tables exist, create them if they do not
 			String tableName = "Session";
 			Boolean found = false;
-			java.sql.DatabaseMetaData databaseMetaData = connection.getMetaData();
+			DatabaseMetaData databaseMetaData = connection.getMetaData();
 			ResultSet resultSet = databaseMetaData.getTables(null, null, tableName, null);
 			if (resultSet.next()) {
 				found = true;
@@ -165,7 +165,16 @@ class DatabaseHelper {
 	 * @param optionID The option ID
 	*/
 	public void newVote(int sessionID, int optionID) {
-
+		try{
+			Statement statement;
+			String sql;
+			statement = connection.createStatement();
+			sql = "UPDATE TallyOptionTable SET VoteTally = VoteTally + 1 WHERE OptionID=" + optionID + " AND SessionID=" + sessionID;
+			statement.executeUpdate(sql);
+		}
+		catch (Exception exception) {
+			System.out.println(exception.toString());
+		}
 	}
 
 	/**
@@ -223,7 +232,7 @@ class DatabaseHelper {
 			statement.executeUpdate(sql);
 			for (Map<Integer, String> optionMap : list) {
 				int optionID = optionMap.entrySet().iterator().next().getKey();
-				String description = optionMap.entrySet().iterator().next().getValue(); // I love Java :P
+				String description = optionMap.entrySet().iterator().next().getValue(); // I love Java :P (SAME)
 				statement = connection.createStatement();
 				sql = "INSERT INTO TallyOptionTable (OptionID, SessionID, Description, VoteTally) " +
 							 "VALUES (" + optionID + ", " + sessionID + ", \'" + description + "\', " + 0 + ")";
@@ -258,6 +267,22 @@ class DatabaseHelper {
 	 * @return The description
 	*/
 	public String getOptionDescription(int sessionID, int optionID) {
-		return "";
+		String Description = "";
+		try {
+			Statement statement;
+			String sql;
+			statement = connection.createStatement();
+			sql = "SELECT OptionID, SessionID, Description FROM TallyOptionTable WHERE OptionID=" + optionID + " AND SessionID=" + sessionID;
+			ResultSet resultSet = statement.executeQuery(sql);
+			while (resultSet.next()) {
+				Description = resultSet.getString("Description");
+				//voteTally = resultSet.getInt("VoteTally");
+			}
+		}
+		catch (Exception exception) {
+			System.out.println(exception.toString());
+		}
+
+		return Description;
 	}
 }
