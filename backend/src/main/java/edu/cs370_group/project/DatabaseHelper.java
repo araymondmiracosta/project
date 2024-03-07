@@ -227,11 +227,14 @@ class DatabaseHelper {
 	 */
 	public void setOptions(int sessionID, List<Map<Integer, String>> list) {
 		try {
+			Statement statement = connection.createStatement();
+			String sql = "DELETE FROM TallyOptionTable WHERE SessionID=" + sessionID;
+			statement.executeUpdate(sql);
 			for (Map<Integer, String> optionMap : list) {
 				int optionID = optionMap.entrySet().iterator().next().getKey();
 				String description = optionMap.entrySet().iterator().next().getValue(); // I love Java :P (SAME)
-				Statement statement = connection.createStatement();
-				String sql = "INSERT INTO TallyOptionTable (OptionID, SessionID, Description, VoteTally) " +
+				statement = connection.createStatement();
+				sql = "INSERT INTO TallyOptionTable (OptionID, SessionID, Description, VoteTally) " +
 							 "VALUES (" + optionID + ", " + sessionID + ", \'" + description + "\', " + 0 + ")";
 				statement.executeUpdate(sql);
 			}
