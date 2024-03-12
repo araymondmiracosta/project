@@ -4,6 +4,7 @@
 
 <style lang="scss">
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+
 :root {
   --primary: #ea4080;
   --secondary: #ee805f;
@@ -18,51 +19,78 @@
 }
 
 h1 {
-  all: unset;
-  font-family: "Inter", sans-serif;
-  font-weight: 900;
+  font-family: Inter;
   font-size: 56px;
-  line-height: 3.5rem;
-  letter-spacing: 0.1em;
+  font-style: normal;
+  font-weight: 900;
+  line-height: normal;
   color: var(--primary-text);
 }
 
+h2 {
+  color: #010001;
+  font-family: Inter;
+  font-size: 38.292px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 140%;
+  /* 53.609px */
+}
+
 p {
-  font-family: "Inter", sans-serif;
-  font-weight: 300;
-  font-size: 19px;
   text-align: center;
-  line-height: 2rem;
-  letter-spacing: 0.1em;
+  font-family: Inter;
+  font-size: 19.482px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 25.192px;
+  /* 129.31% */
   color: var(--primary-text);
 }
 
 .button {
-  font-family: "Inter", sans-serif;
-  font-weight: 500;
-  font-size: 18px;
-  line-height: 2rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #fff;
-  //linear gradient from EA4080 to EE805F
-  background-image: linear-gradient(45deg, var(--primary), var(--secondary));
-  border: none;
-  padding: 0.5rem 1.5rem;
-  border-radius: 99px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  all: unset;
+  display: flex;
+  justify-content: center;
 
-  &:hover {
-  }
+  padding: 14.108px 43.885px;
+  align-items: center;
+  border-radius: 67.179px;
+  background: linear-gradient(90deg, #EA4080 0%, #EE805F 100%);
+  box-shadow: 0px 3.023px 5.038px 0px rgba(0, 0, 0, 0.15);
+  border: none;
+  color: #FFF;
+  font-family: Inter;
+  font-size: 18.138px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+
 
   &.--secondary {
     //just gray color and border
     background-image: none;
     background-color: transparent;
     color: var(--gray);
-    border: 2px solid var(--gray);
+    border-radius: 67.179px;
+    border: 1px solid var(--gray);
+    box-shadow: 0px 3.023px 5.038px 0px rgba(0, 0, 0, 0.15);
   }
+}
+
+
+
+input {
+  padding: 14.108px 43.885px;
+  border-radius: 67.179px;
+  border: 1px solid #E5E5E5;
+  font-family: Inter;
+  font-size: 18.138px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  color: var(--primary-text);
+  display: flex;
+  margin: 1rem;
 }
 </style>

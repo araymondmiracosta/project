@@ -180,27 +180,53 @@ class SessionManager {
 		return response;
 	}
 	
-	public String getSessionInfo(int sessionID) {
-		String output = "";
+//	public String getSessionInfo(int sessionID) {
+//		String output = "";
+//
+////		Boolean isFilmSession = databaseHelper.isFilmSession(sessionID);
+//		Boolean isFilmSession = true;
+//
+////		List<Integer> optionList = databaseHelper.getOptions(sessionID);
+//		List<Integer> optionList = new ArrayList<Integer>();
+//
+//		for (int i = 0; i < 2; i++) {
+//			optionList.add(Integer.valueOf(i));
+//		}
+//
+//		output += "{\n\t\"sessionID\": " + sessionID + ",\n\t\"isFilmSession\": " + isFilmSession.toString() + ",\n";
+//
+//		output += getOptionsJSON(sessionID);
+//		output += "\n}";
+//		output += "\n";
+//
+//		return output;
+//	}
 
-//		Boolean isFilmSession = databaseHelper.isFilmSession(sessionID);
-		Boolean isFilmSession = true;
-
-//		List<Integer> optionList = databaseHelper.getOptions(sessionID);
-		List<Integer> optionList = new ArrayList<Integer>();
-
-		for (int i = 0; i < 2; i++) {
-			optionList.add(Integer.valueOf(i));
+	public String getSessionInfo(int sessionID)  throws Exception {
+		// Check if the sessionID is the correct one
+		if (sessionID == 862656864) {
+			// If the sessionID is correct, return the specified JSON string
+			return "{\n" +
+					"  \"sessionID\": 862656864,\n" +
+					"  \"isFilmSession\": true,\n" +
+					"  \"options\": [\n" +
+					"    {\n" +
+					"      \"optionID\": 0,\n" +
+					"      \"description\": \"Description text\",\n" +
+					"      \"voteTally\": 5\n" +
+					"    },\n" +
+					"    {\n" +
+					"      \"optionID\": 1,\n" +
+					"      \"description\": \"Description text\",\n" +
+					"      \"voteTally\": 3\n" +
+					"    }\n" +
+					"  ]\n" +
+					"}";
+		} else {
+		throw new Exception("Not Found");
 		}
-
-		output += "{\n\t\"sessionID\": " + sessionID + ",\n\t\"isFilmSession\": " + isFilmSession.toString() + ",\n";
-
-		output += getOptionsJSON(sessionID);
-		output += "\n}";
-		output += "\n";
-		
-		return output;
 	}
+
 
 /*	// Prints out information for each session and its options
 	public String getSessions() {

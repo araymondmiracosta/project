@@ -13,23 +13,23 @@ import java.util.ArrayList;
 import org.json.*;
 
 class APIHelper {
-	private String apiToken = "";
+	private String apiToken = "ff08d7c9ff8eb9db93d17e72e06f213c";
 
 	public APIHelper() {
 		// Read the api key from a file
-		File file = new File("./apitoken.txt");
-		try {
-			FileInputStream fileInputStream = new FileInputStream(file);
-			Scanner scanner = new Scanner(fileInputStream);
-			this.apiToken = scanner.nextLine();
-			scanner.close();
-			fileInputStream.close();
-		}
-		catch (Exception exception) {
-			System.out.println(exception);
-			System.out.println("Is the API token file present? Exiting...");
-			System.exit(1);
-		}
+//		File file = new File("./apitoken.txt");
+//		try {
+//			FileInputStream fileInputStream = new FileInputStream(file);
+//			Scanner scanner = new Scanner(fileInputStream);
+//			this.apiToken = scanner.nextLine();
+//			scanner.close();
+//			fileInputStream.close();
+//		}
+//		catch (Exception exception) {
+//			System.out.println(exception);
+//			System.out.println("Is the API token file present? Exiting...");
+//			System.exit(1);
+//		}
 	}
 	/** 
 	 * Returns a List<Integer> containing the film IDs
