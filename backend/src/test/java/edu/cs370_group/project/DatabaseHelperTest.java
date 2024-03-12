@@ -30,8 +30,7 @@ class DatabaseHelperTest {
 	}
 
     @BeforeEach
-    void setUp() {
-		
+    void setUp() {		
 		try {
 		Class.forName("com.mysql.cj.jdbc.Driver");
 			this.connection = DriverManager.getConnection(

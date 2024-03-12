@@ -149,7 +149,7 @@ class SessionManager {
 //		return (databaseHelper.getVoteTally(sessionID, optionID));
 //	}
 	
-	public String getOptionsJSON(int sessionID) {
+	private String getOptionsJSON(int sessionID) {
 		String response = "";
 
 //		List<Integer> optionList = databaseHelper.getOptions(sessionID);
