@@ -48,21 +48,26 @@ class APIHelper {
 
 		int perGenre = 20 / genres.size();
 
-		for (Integer genre : genres) {
-			URI endpointURI = new URI("https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&with_genres=" + genre + "&api_key=" + this.apiToken);
-			URLConnection endpointConnection = endpointURI.toURL().openConnection();
-			InputStream response = endpointConnection.getInputStream();
-			Scanner inputScanner = new Scanner(response);
-			JSONObject jsonObject = new JSONObject(inputScanner.nextLine());
-			JSONArray resultsArray = new JSONArray(jsonObject.getJSONArray("results"));
-			for (int i = 0; i < perGenre; i++) {
-				// Add the ith movie from the returned APIHelper
-				JSONObject film = resultsArray.getJSONObject(i);
-				int id = film.getInt("id");
-				list.add(id);
+		try {
+			for (Integer genre : genres) {
+				URI endpointURI = new URI("https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&with_genres=" + genre + "&api_key=" + this.apiToken);
+				URLConnection endpointConnection = endpointURI.toURL().openConnection();
+				InputStream response = endpointConnection.getInputStream();
+				Scanner inputScanner = new Scanner(response);
+				JSONObject jsonObject = new JSONObject(inputScanner.nextLine());
+				JSONArray resultsArray = new JSONArray(jsonObject.getJSONArray("results"));
+				for (int i = 0; i < perGenre; i++) {
+					// Add the ith movie from the returned APIHelper
+					JSONObject film = resultsArray.getJSONObject(i);
+					int id = film.getInt("id");
+					list.add(id);
+				}
+				inputScanner.close();
+				response.close();
 			}
-			inputScanner.close();
-			response.close();
+		}
+		catch (Exception exception) {
+			System.out.println("Invalid genre code.");
 		}
 		
 		return list;
