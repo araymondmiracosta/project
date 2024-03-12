@@ -67,7 +67,7 @@ class APIHelper {
 			}
 		}
 		catch (Exception exception) {
-			System.out.println("Invalid genre code.");
+			throw new Exception("Invalid genre code");
 		}
 		
 		return list;
@@ -87,15 +87,21 @@ class APIHelper {
 	public String getFilmTitle(int filmID) throws Exception {
 		// Parse the JSON and look for the title attribute
 
-		URI endpointURI = new URI("https://api.themoviedb.org/3/movie/" + filmID + "?language=en-US" + "&api_key=" + this.apiToken);
-		URLConnection endpointConnection = endpointURI.toURL().openConnection();
-		InputStream response = endpointConnection.getInputStream();
-		Scanner inputScanner = new Scanner(response);
-		JSONObject jsonObject = new JSONObject(inputScanner.nextLine());
-		String filmTitle = jsonObject.getString("title");
-		
-		inputScanner.close();
-		response.close();
+		String filmTitle = "";
+		try {
+			URI endpointURI = new URI("https://api.themoviedb.org/3/movie/" + filmID + "?language=en-US" + "&api_key=" + this.apiToken);
+			URLConnection endpointConnection = endpointURI.toURL().openConnection();
+			InputStream response = endpointConnection.getInputStream();
+			Scanner inputScanner = new Scanner(response);
+			JSONObject jsonObject = new JSONObject(inputScanner.nextLine());
+			filmTitle = jsonObject.getString("title");
+			
+			inputScanner.close();
+			response.close();
+		}
+		catch (Exception exception) {
+			throw new Exception("Invalid film ID");
+		}
 
 		return filmTitle;
 	}
