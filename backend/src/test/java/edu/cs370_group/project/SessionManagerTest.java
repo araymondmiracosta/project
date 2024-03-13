@@ -224,6 +224,8 @@ class SessionManagerTest {
 
 			JSONObject endSession = new JSONObject(sessionManager.endSession(sessionID));
 
+			assertTrue(endSession.getBoolean("consensus"));
+
 			JSONArray options = new JSONArray(endSession.getJSONArray("options"));
 
 			for (int i = 0; i < optionsCount; i++) {
