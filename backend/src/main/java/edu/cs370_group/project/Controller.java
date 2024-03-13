@@ -28,11 +28,6 @@ public class Controller {
 		}
 	}
 
-/*	@RequestMapping(value = "/getSessions", produces = "application/json")
-	public ResponseEntity<String> getSessions() {
-		return ResponseEntity.ok(sessionManager.getSessions());
-	} */
-
 	@GetMapping(value = "/getSessionInfo", produces = "application/json")
 	public String getSessionInfo(@RequestParam int session) {
 		return (sessionManager.getSessionInfo(session));
