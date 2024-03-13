@@ -142,7 +142,7 @@ class SessionManager {
 	}
 
 	public void delVote(int sessionID, int optionID) {
-// 		databaseHelper.delVote(sessionID, optionID);
+ 		databaseHelper.delVote(sessionID, optionID);
 	}
 
 	private String getOptionsJSON(int sessionID) {

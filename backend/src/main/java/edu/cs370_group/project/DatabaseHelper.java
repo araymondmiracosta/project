@@ -178,6 +178,26 @@ class DatabaseHelper {
 	}
 
 	/**
+	 * Decrements the vote tally of the given option ID associated
+	 * with the given session ID by one in the Option table
+	 *
+	 * @param sessionID The session ID
+	 * @param optionID The option ID
+	*/
+	public void delVote(int sessionID, int optionID) {
+		try{
+			Statement statement;
+			String sql;
+			statement = connection.createStatement();
+			sql = "UPDATE TallyOptionTable SET VoteTally = VoteTally - 1 WHERE OptionID=" + optionID + " AND SessionID=" + sessionID;
+			statement.executeUpdate(sql);
+		}
+		catch (Exception exception) {
+			System.out.println(exception.toString());
+		}
+	}
+
+	/**
 	 * Returns the vote tally for the given option in the
 	 * given session
 	 *
