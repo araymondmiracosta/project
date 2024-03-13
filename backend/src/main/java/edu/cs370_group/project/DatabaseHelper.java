@@ -215,6 +215,20 @@ class DatabaseHelper {
 	public List<Integer> getOptions(int sessionID) {
 		List<Integer> newList = new ArrayList<Integer>();
 
+		try {
+			Statement statement;
+			String sql;
+			statement = connection.createStatement();
+			sql = "SELECT OptionID, SessionID FROM TallyOptionTable WHERE SessionID=" + sessionID;
+			ResultSet resultSet = statement.executeQuery(sql);
+			while (resultSet.next()) {
+				newList.add(resultSet.getInt("OptionID"));
+			}
+		}
+		catch (Exception exception) {
+			System.out.println(exception);
+		}
+
 		return newList;
 	}
 
@@ -254,7 +268,28 @@ class DatabaseHelper {
 	 * @return True if film session, false otherwise
 	 */
 	public Boolean isFilmSession(int sessionID) {
-		return true;
+		try {
+			Statement statement;
+			String sql;
+			statement = connection.createStatement();
+			sql = "SELECT SessionID, SessionType FROM Session WHERE SessionID=" + sessionID;
+			ResultSet resultSet = statement.executeQuery(sql);
+			while (resultSet.next()) {
+				int sessionType = resultSet.getInt("SessionType");
+				if (sessionType == 0) {
+					return false;
+				}
+				else if (sessionType == 1) {
+					return true;
+				}
+			}
+		}
+		catch (Exception exception) {
+			System.out.println(exception);
+		}
+
+ 
+		return false;
 	}
 
 	/**
