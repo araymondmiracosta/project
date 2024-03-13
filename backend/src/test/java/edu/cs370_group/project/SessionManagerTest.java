@@ -187,7 +187,7 @@ class SessionManagerTest {
 		int sessionID = new JSONObject(sessionManager.createGenericSession(optionList)).getInt("sessionID");
 		String expected = """
 		{
-		  "sessionID": 804499,
+		  "sessionID": %d,
 		  "isFilmSession": false,
 		  "options": [
 			{
@@ -202,12 +202,13 @@ class SessionManagerTest {
 			}
 		  ]
 		}
-		""";
+		""".formatted(sessionID);
+
 		JSONObject expectedJSON = new JSONObject(expected);
 
 		JSONObject candidateJSON = new JSONObject(sessionManager.getSessionInfo(sessionID));
 
-		assertTrue(expectedJSON.equals(candidateJSON));
+		assertEquals(0, expectedJSON.toString().compareTo(candidateJSON.toString()));
 	}
 
 	@Test
