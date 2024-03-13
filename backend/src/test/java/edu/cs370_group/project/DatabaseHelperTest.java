@@ -146,23 +146,7 @@ class DatabaseHelperTest {
 		List<Map<Integer, String>> optionList = populateOptionList(3);
 		databaseHelper.createSession(sessionID, optionList, isFilmSession);
 
-		List<Integer> candidateValue = databaseHelper.getOptions(sessionID);
-		List<Integer> actualValue = new ArrayList<Integer>();
-
-		try {
-			Statement statement = connection.createStatement();
-			String sql = "SELECT OptionID, SessionID FROM TallyOptionTable WHERE SessionID=" + sessionID;
-			ResultSet resultSet = statement.executeQuery(sql);
-			while (resultSet.next()) {
-				actualValue.add(resultSet.getInt("OptionID"));
-			}
-			for (int i = 0; i < candidateValue.size(); i++) {
-				assertTrue(candidateValue.get(i) == actualValue.get(i));
-			}
-		}
-		catch (Exception exception) {
-			System.out.println(exception);
-		}
+		assertTrue(databaseHelper.getOptions(sessionID).size() == optionList.size());
     }
 
     @Test

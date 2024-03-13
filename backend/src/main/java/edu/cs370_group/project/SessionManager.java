@@ -101,7 +101,7 @@ class SessionManager {
 	// Create new session with unique ID
 	private int createSession(List<Map<Integer, String>> options, Boolean isFilmSession) {
 		Random randomNumber = new Random();
-		int sessionID = randomNumber.nextInt(2000000000);
+		int sessionID = randomNumber.nextInt(999999);
 		databaseHelper.createSession(sessionID, options, isFilmSession);
 		return sessionID;
 	}
