@@ -96,6 +96,17 @@ class DatabaseHelper {
 	}
 
 	/**
+	 * Returns a List<Integer> of session IDs.
+	 *
+	 * @return The list
+	*/
+//	public List<Integer> getSessions() {
+//		ArrayList<Integer> sessionList = new ArrayList<Integer>();
+//
+//		return sessionList;
+//	}
+
+	/**
 	 * Creates a new entry in the Session table
 	 * and a new set of rows in the Options table
 	 * with the given SessionID and OptionID for each option
