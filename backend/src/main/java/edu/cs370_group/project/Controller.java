@@ -67,7 +67,7 @@ public class Controller {
 
 	@GetMapping(value = "/getGenreList", produces = "application/json")
 	public ResponseEntity<String> getGenreList() {
-		return ResponseEntity.ok(apiHelper.getGenreList());
+		return ResponseEntity.ok(sessionManager.getGenreList());
 	}
 
 	@GetMapping("/createFilmSession")

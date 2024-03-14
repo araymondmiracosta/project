@@ -106,6 +106,10 @@ class SessionManager {
 		return sessionID;
 	}
 
+	public String getGenreList() {
+		return (apiHelper.getGenreList());
+	}
+
 	public String createGenericSession(List<String> options) {
 		List<Map<Integer, String>> optionList = new ArrayList<Map<Integer, String>>();
 		for (int i = 0; i < options.size(); i++) {
