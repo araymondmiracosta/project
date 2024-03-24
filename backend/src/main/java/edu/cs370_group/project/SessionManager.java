@@ -15,7 +15,8 @@ class SessionManager {
 	public SessionManager(DatabaseHelper databaseHelper, APIHelper apiHelper) throws Exception {
 		this.databaseHelper = databaseHelper;
 		this.apiHelper = apiHelper;
-		
+
+		//this is a test 
 		// Testing
 //		ArrayList<Integer> list = new ArrayList<Integer>();
 //		list.add(28);
