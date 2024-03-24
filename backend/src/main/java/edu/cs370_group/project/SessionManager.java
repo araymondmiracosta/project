@@ -142,29 +142,19 @@ class SessionManager {
 	}
 
 	public void delVote(int sessionID, int optionID) {
-// 		databaseHelper.delVote(sessionID, optionID);
+ 		databaseHelper.delVote(sessionID, optionID);
 	}
 
-//	public int getVoteTally(int sessionID, int optionID) {
-//		return (databaseHelper.getVoteTally(sessionID, optionID));
-//	}
-	
-	public String getOptionsJSON(int sessionID) {
+	private String getOptionsJSON(int sessionID) {
 		String response = "";
 
-//		List<Integer> optionList = databaseHelper.getOptions(sessionID);
-		List<Integer> optionList = new ArrayList<Integer>();
-
-		for (int i = 0; i < 2; i++) {
-			optionList.add(Integer.valueOf(i));
-		}
+		List<Integer> optionList = databaseHelper.getOptions(sessionID);
 
 		response += "\n\t\"options\": [\n";
 
 		for (Integer option : optionList) {
 			int voteTally = databaseHelper.getOptionVoteTally(sessionID, option);
-//			String optionDescription = databaseHelper.getOptionDescription(session, option);
-			String optionDescription = "Description text";
+			String optionDescription = databaseHelper.getOptionDescription(sessionID, option);
 
 
 			response += "\t\t{\n\t\t\t\"optionID\": " + option.toString() + ",\n\t\t\t\"description\": \"" + optionDescription + "\",\n\t\t\t\"voteTally\": " + voteTally + "\n\t\t}";
@@ -180,96 +170,17 @@ class SessionManager {
 		return response;
 	}
 	
-//	public String getSessionInfo(int sessionID) {
-//		String output = "";
-//
-////		Boolean isFilmSession = databaseHelper.isFilmSession(sessionID);
-//		Boolean isFilmSession = true;
-//
-////		List<Integer> optionList = databaseHelper.getOptions(sessionID);
-//		List<Integer> optionList = new ArrayList<Integer>();
-//
-//		for (int i = 0; i < 2; i++) {
-//			optionList.add(Integer.valueOf(i));
-//		}
-//
-//		output += "{\n\t\"sessionID\": " + sessionID + ",\n\t\"isFilmSession\": " + isFilmSession.toString() + ",\n";
-//
-//		output += getOptionsJSON(sessionID);
-//		output += "\n}";
-//		output += "\n";
-//
-//		return output;
-//	}
-
-	public String getSessionInfo(int sessionID)  throws Exception {
-		// Check if the sessionID is the correct one
-		if (sessionID == 862656864) {
-			// If the sessionID is correct, return the specified JSON string
-			return "{\n" +
-					"  \"sessionID\": 862656864,\n" +
-					"  \"isFilmSession\": true,\n" +
-					"  \"options\": [\n" +
-					"    {\n" +
-					"      \"optionID\": 0,\n" +
-					"      \"description\": \"Description text\",\n" +
-					"      \"voteTally\": 5\n" +
-					"    },\n" +
-					"    {\n" +
-					"      \"optionID\": 1,\n" +
-					"      \"description\": \"Description text\",\n" +
-					"      \"voteTally\": 3\n" +
-					"    }\n" +
-					"  ]\n" +
-					"}";
-		} else {
-		throw new Exception("Not Found");
-		}
-	}
-
-
-/*	// Prints out information for each session and its options
-	public String getSessions() {
+	public String getSessionInfo(int sessionID) {
 		String output = "";
-//		List<Integer> sessionList = databaseHelper.getSessions();
-		List<Integer> sessionList = new ArrayList<Integer>();
-		for (int i = 0; i < 10; i++) {
-			sessionList.add(Integer.valueOf(i));
-		}
 
-		output = "{\n    \"Sessions\": [\n";
+		Boolean isFilmSession = databaseHelper.isFilmSession(sessionID);
 
-		for (Integer session : sessionList) {
-//			Boolean isFilmSession = databaseHelper.isFilmSession(session);
-			Boolean isFilmSession = true;
-//			List<Integer> optionList = databaseHelper.getOptions(session);
-			List<Integer> optionList = new ArrayList<Integer>();
-			for (int i = 0; i < 5; i++) {
-				optionList.add(Integer.valueOf(i));
-			}
-			output += "        {\n            \"sessionID\": " + session.toString() + ",\n            \"isFilmSession\": " + isFilmSession.toString() + ",\n            \"options\": [\n";
+		output += "{\n\t\"sessionID\": " + sessionID + ",\n\t\"isFilmSession\": " + isFilmSession.toString() + ",\n";
 
-			for (Integer option : optionList) {
-//				int voteTally = databaseHelper.getOptionVoteTally(session, option);
-				int voteTally = 5;
-//				String optionDescription = databaseHelper.getOptionDescription(session, option);
-				String optionDescription = "Description text";
-
-				output += "                {\n                    \"optionID\": " + option.toString() + ",\n                    \"description\": \"" + optionDescription + "\",\n                    \"voteTally\": " + voteTally + "\n                }";
-
-				if (!(option.equals(optionList.getLast()))) {
-					output += ",";
-				}
-				output += "\n";
-			}
-			output += "            ]\n        }";
-			if (!(session.equals(sessionList.getLast()))) {
-				output += ",";
-			}
-			output += "\n";
-		}
-		output += "    ]\n}\n";
+		output += getOptionsJSON(sessionID);
+		output += "\n}";
+		output += "\n";
 		
 		return output;
-	} */
+	}
 }
