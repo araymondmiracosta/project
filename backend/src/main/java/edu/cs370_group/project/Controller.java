@@ -70,6 +70,13 @@ public class Controller {
 		return ResponseEntity.ok(apiHelper.getGenreList());
 	}
 
+	//getFilm by ID
+	@GetMapping(value = "/getFilm", produces = "application/json")
+	public String getFilm(@RequestParam int filmID) throws Exception {
+		return (apiHelper.getFilm(filmID));
+	}
+
+
 	@GetMapping("/createFilmSession")
 	public String createFilmSession(@RequestParam String[] genres) throws Exception {
 		List<Integer> genreList = new ArrayList<Integer>();

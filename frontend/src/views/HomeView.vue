@@ -6,7 +6,7 @@
     <div class="section" v-if="!enterSessionID">
       <p>Decisions Made Social - Swipe Your Way to the Perfect Pick.</p>
       <div class="contrls">
-        <button class="button">CREATE SESSION</button>
+        <button class="button" @click="$router.push(`/create`)" >CREATE SESSION</button>
         <button class="button --secondary" @click="enterSessionID = !enterSessionID">JOIN SESSION</button>
       </div>
     </div>

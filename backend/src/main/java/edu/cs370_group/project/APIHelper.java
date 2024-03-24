@@ -106,6 +106,44 @@ class APIHelper {
 		return filmTitle;
 	}
 
+	public String getFilm(int filmID) throws Exception {
+		// Parse the JSON and look for the title attribute
+
+		String filmTitle = "";
+		String vote_average = "";
+		String overview = "";
+		String release_date = "";
+		String poster_path = "";
+		try {
+			URI endpointURI = new URI("https://api.themoviedb.org/3/movie/" + filmID + "?language=en-US" + "&api_key=" + this.apiToken);
+			URLConnection endpointConnection = endpointURI.toURL().openConnection();
+			InputStream response = endpointConnection.getInputStream();
+			Scanner inputScanner = new Scanner(response);
+			JSONObject jsonObject = new JSONObject(inputScanner.nextLine());
+			filmTitle = jsonObject.getString("title");
+			vote_average = jsonObject.getBigDecimal("vote_average").toString();
+			overview = jsonObject.getString("overview");
+			release_date = jsonObject.getString("release_date");
+			poster_path = jsonObject.getString("poster_path");
+
+
+			inputScanner.close();
+			response.close();
+		}
+		catch (Exception exception) {
+			throw new Exception("Invalid film ID" + exception);
+		}
+
+		JSONObject json = new JSONObject();
+		json.put("title", filmTitle);
+		json.put("vote_average", vote_average);
+		json.put("overview", overview);
+		json.put("release_date", release_date);
+		json.put("poster_path", poster_path);
+		return json.toString();
+
+	}
+
 	/**
 	 * Returns a java List<Integer> object containing
 	 * film IDs similar to the one given.

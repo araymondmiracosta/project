@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import SessionView from '../views/JoinSessionView.vue'
+import CreateSessionView from '../views/CreateSessionView.vue'
+
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -13,6 +15,11 @@ const routes: Array<RouteRecordRaw> = [
     name: 'session',
     component: SessionView
   },
+  {
+    path: '/create',
+    name: 'create',
+    component: CreateSessionView
+  }
   
 ]
 
