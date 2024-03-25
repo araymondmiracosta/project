@@ -3,8 +3,6 @@ package edu.cs370_group.project;
 import java.util.List;
 import java.util.Scanner;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URLConnection;
@@ -13,24 +11,11 @@ import java.util.ArrayList;
 import org.json.*;
 
 class APIHelper {
-	private String apiToken = "";
+	private String apiToken = "ff08d7c9ff8eb9db93d17e72e06f213c";
 
 	public APIHelper() {
-		// Read the api key from a file
-		File file = new File("./apitoken.txt");
-		try {
-			FileInputStream fileInputStream = new FileInputStream(file);
-			Scanner scanner = new Scanner(fileInputStream);
-			this.apiToken = scanner.nextLine();
-			scanner.close();
-			fileInputStream.close();
-		}
-		catch (Exception exception) {
-			System.out.println(exception);
-			System.out.println("Is the API token file present? Exiting...");
-			System.exit(1);
-		}
 	}
+
 	/** 
 	 * Returns a List<Integer> containing the film IDs
 	 * associated with the given genres.
@@ -84,7 +69,7 @@ class APIHelper {
 	 *
 	 * @return The film title
 	*/
-	public String getFilmTitle(int filmID) throws Exception {
+	public String getFilmTitle(int filmID) {
 		// Parse the JSON and look for the title attribute
 
 		String filmTitle = "";
@@ -100,7 +85,7 @@ class APIHelper {
 			response.close();
 		}
 		catch (Exception exception) {
-			throw new Exception("Invalid film ID");
+			System.out.println("Invalid film ID");
 		}
 
 		return filmTitle;

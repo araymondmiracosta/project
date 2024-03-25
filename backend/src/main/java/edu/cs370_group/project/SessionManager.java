@@ -29,73 +29,69 @@ class SessionManager {
 
 	public String endSession(int sessionID) {
 		String response = "{\n";
-		response += "\t\"consensus\": false,\n";
-		response += getOptionsJSON(sessionID);
-		response += "}";
-		databaseHelper.endSession(sessionID);
-		return response;
-//		double majority = 0.60;
-//		int tallyTotal = 0;
-//		List<Integer> options = databaseHelper.getOptions(sessionID);
-//		List<Integer[]> optionsTallies = new ArrayList<Integer[]>();
-//		Integer[] greatestOption = new Integer[2];
-//		
-//		for (int optionID : options) {
-//			int tally = databaseHelper.getOptionVoteTally(sessionID, optionID);
-//			Integer tallyMap[] = new Integer[2];
-//			tallyMap[0] = Integer.valueOf(optionID);
-//			tallyMap[1] = Integer.valueOf(tally);
-//			optionsTallies.add(tallyMap);
-//			tallyTotal += tally;
-//		}
-//		
-//		greatestOption[0] = optionsTallies.get(0)[0];
-//		greatestOption[1] = optionsTallies.get(0)[1];
-//
-//		for (Integer[] tallyMap : optionsTallies) {
-//			int optionID = tallyMap[0];
-//			int optionTally = tallyMap[1];
-//			if ((optionTally / tallyTotal) >= majority) {
-//				response += "\t\"consensus\": true,\n"
-//				response += getOptionsJSON(sessionID);
-//				response += "}";
-//				databaseHelper.endSession(sessionID);
-//				return response;
-//			}
-//			if (optionTally > greatestOption[1]) {
-//				greatestOption[0] = optionID;
-//				greatestOption[1] = optionTally;
-//			}
-//		}
-//
-//		if (databaseHelper.isFilmSession(sessionID)) {
-//			List<Map<Integer, String>> newFilmList = new ArrayList<Map<Integer, String>>();
-//			for (Integer[] tallyMap : optionsTallies) {
-//				int similarPortion = ((tallyMap[1] / tallyTotal) * listTotal);
-//				List<Integer> similarList = apiHelper.getSimilar(tallyMap[0]);
-//				for (int i = 0; i < similarPortion; i++) {
-//					Map <Integer, String> tempMap = new HashMap<Integer, String>();
-//					tempMap.put(similarList.get(i), apiHelper.getFilmTitle(similarList.get(i)));
-//					newFilmList.add(tempMap);
-//					if ((i + 1) >= similarList.size()) {
-//						break;
-//					}
-//				}
-//			}
-//			databaseHelper.setOptions(sessionID, newFilmList);
-//			response += "\t\"consensus\": false,\n"
-//			response += getOptionsJSON(sessionID);
-//			response += "}";
-//			databaseHelper.endSession(sessionID);
-//			return response;
-//		}
-//		response += "\t\"consensus\": true,\n"
-//		response += "\t\"winningOption\": " + greatestOption[0] + "\n";
-//		response += getOptionsJSON(sessionID);
-//		response += "}";
-//		databaseHelper.endSession(sessionID);
-//		return response;
+		double majority = 0.60;
 
+		// It is a generic session
+		if (!(databaseHelper.isFilmSession(sessionID))) {
+			response += "\t\"consensus\": true,\n";
+			response += getOptionsJSON(sessionID);
+			response += "}";
+			databaseHelper.endSession(sessionID);
+			return response;
+		}
+		// It is a film session
+		else {
+			int tallyTotal = 0;
+			List<Integer> options = databaseHelper.getOptions(sessionID);
+			Integer[] greatestOption = new Integer[2];
+			// Initialize greatestOption to the values of the first option for this session
+			greatestOption[0] = options.get(0);
+			greatestOption[1] = databaseHelper.getOptionVoteTally(sessionID, greatestOption[0]);
+
+			for (int optionID : options) {
+				int tally = databaseHelper.getOptionVoteTally(sessionID, optionID);
+				// If this option has more votes than the previous one, replace the old record
+				if (tally > greatestOption[1]) {
+					greatestOption[0] = optionID;
+					greatestOption[1] = tally;
+				}
+				tallyTotal += tally;
+			}
+
+			double highestRatio = greatestOption[1] / tallyTotal;
+
+			// If an option recieved at least 60% of the votes, return the options
+			if (highestRatio >= majority) {
+				response += "\t\"consensus\": true,\n";
+				response += getOptionsJSON(sessionID);
+				response += "}";
+				databaseHelper.endSession(sessionID);
+				return response;
+			}
+			// If no option recieved at least 60% of the votes, revote
+			else {
+				List<Map<Integer, String>> newFilmList = new ArrayList<Map<Integer, String>>();
+				// Get films similar to the highest rated one
+				List<Integer> similarList = apiHelper.getSimilar(greatestOption[0]);
+				int count = 0;
+				for (Integer newOption : similarList) {
+					if (count > listTotal) {
+						break;
+					}
+					Map<Integer, String> filmMap = new HashMap<Integer, String>();
+					filmMap.put(newOption, apiHelper.getFilmTitle(newOption));
+					newFilmList.add(filmMap);
+					count++;
+				}
+				// Set the new options
+				databaseHelper.setOptions(sessionID, newFilmList);
+
+				response += "\t\"consensus\": false,\n";
+				response += getOptionsJSON(sessionID);
+				response += "}";
+				return response;
+			}
+		}
 	}
 
 	// Create new session with unique ID
