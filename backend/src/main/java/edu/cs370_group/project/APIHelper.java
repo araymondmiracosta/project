@@ -142,6 +142,25 @@ class APIHelper {
 	*/
 	public String getGenreList() {
 		// Return the response, unedited, from the API
-		return "";
+		String JSONResponse = "";
+
+		try {
+			URI endpointURI = new URI("https://api.themoviedb.org/3/genre/movie/list?api_key=" + this.apiToken);
+			URLConnection endpointConnection = endpointURI.toURL().openConnection();
+			InputStream response = endpointConnection.getInputStream();
+			Scanner inputScanner = new Scanner(response);
+
+			while (inputScanner.hasNext()) {
+				JSONResponse += inputScanner.nextLine();
+			}
+
+			inputScanner.close();
+			response.close();
+		}
+		catch (Exception exception) {
+			System.out.println(exception);
+		}
+
+		return JSONResponse;
 	}
 }
