@@ -12,6 +12,7 @@ import org.json.*;
 
 class APIHelper {
 	private String apiToken = "ff08d7c9ff8eb9db93d17e72e06f213c";
+	private int listTotal = 20;
 
 	public APIHelper() {
 	}
@@ -31,7 +32,7 @@ class APIHelper {
 	public List<Integer> getFilmList(List<Integer> genres) throws Exception { 	// Throws anything
 		List<Integer> list = new ArrayList<Integer>();
 
-		int perGenre = 20 / genres.size();
+		int perGenre = listTotal / genres.size();
 
 		try {
 			for (Integer genre : genres) {
@@ -105,7 +106,29 @@ class APIHelper {
 	public List<Integer> getSimilar(int filmID) {
 		List<Integer> list = new ArrayList<Integer>();
 
+		try {
+			URI endpointURI = new URI("https://api.themoviedb.org/3/movie/" + filmID + "/similar" + "?api_key=" + this.apiToken);
+			URLConnection endpointConnection = endpointURI.toURL().openConnection();
+			InputStream response = endpointConnection.getInputStream();
+			Scanner inputScanner = new Scanner(response);
+			JSONObject jsonObject = new JSONObject(inputScanner.nextLine());
+			JSONArray resultsArray = new JSONArray(jsonObject.getJSONArray("results"));
+
+			for (int i = 0; i < listTotal; i++) {
+				JSONObject film = resultsArray.getJSONObject(i);
+				int id = film.getInt("id");
+				list.add(id);
+			}
+
+			inputScanner.close();
+			response.close();
+		}
+		catch (Exception exception) {
+			System.out.println(exception);
+		}
+
 		return list;
+
 	}
 
 	/**

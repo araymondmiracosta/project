@@ -70,7 +70,7 @@ public class Controller {
 		return ResponseEntity.ok(sessionManager.getGenreList());
 	}
 
-	@GetMapping("/createFilmSession")
+	@GetMapping(value = "/createFilmSession", produces = "application/json")
 	public String createFilmSession(@RequestParam String[] genres) throws Exception {
 		List<Integer> genreList = new ArrayList<Integer>();
 		for (int i = 0; i < genres.length; i++) {

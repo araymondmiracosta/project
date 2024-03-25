@@ -15,16 +15,6 @@ class SessionManager {
 	public SessionManager(DatabaseHelper databaseHelper, APIHelper apiHelper) throws Exception {
 		this.databaseHelper = databaseHelper;
 		this.apiHelper = apiHelper;
-		
-		// Testing
-//		ArrayList<Integer> list = new ArrayList<Integer>();
-//		list.add(28);
-//		list.add(16);
-//		list.add(18);
-//		for (Integer item : apiHelper.getFilmList(list)) {
-//			System.out.println(item + "  :  " + apiHelper.getFilmTitle(item));
-//		}
-//		System.exit(0);
 	}
 
 	public String endSession(int sessionID) {
@@ -58,7 +48,14 @@ class SessionManager {
 				tallyTotal += tally;
 			}
 
-			double highestRatio = greatestOption[1] / tallyTotal;
+			double highestRatio;
+			// Check for divide by zero
+			if (tallyTotal == 0) {
+				highestRatio = 1;
+			}
+			else {
+				highestRatio = greatestOption[1] / tallyTotal;
+			}
 
 			// If an option recieved at least 60% of the votes, return the options
 			if (highestRatio >= majority) {
@@ -83,12 +80,13 @@ class SessionManager {
 					newFilmList.add(filmMap);
 					count++;
 				}
-				// Set the new options
-				databaseHelper.setOptions(sessionID, newFilmList);
-
 				response += "\t\"consensus\": false,\n";
 				response += getOptionsJSON(sessionID);
 				response += "}";
+
+				// Set the new options
+				databaseHelper.setOptions(sessionID, newFilmList);
+
 				return response;
 			}
 		}
