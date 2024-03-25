@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 @org.springframework.stereotype.Controller
 @ResponseBody
-@ResponseStatus(HttpStatus.NOT_IMPLEMENTED)
+//@ResponseStatus(HttpStatus.NOT_IMPLEMENTED)
 public class Controller {
 	DatabaseHelper databaseHelper = null;
 	APIHelper apiHelper = null;
