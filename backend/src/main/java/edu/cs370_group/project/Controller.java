@@ -43,7 +43,7 @@ public class Controller {
 	}
 
 	@GetMapping(value = "/endSession", produces = "application/json")
-	public String endSession(@RequestParam int session) {
+	public String endSession(@RequestParam int session) throws Exception {
 		return (sessionManager.endSession(session));
 	}
 
@@ -60,7 +60,7 @@ public class Controller {
 	}
 
 	@GetMapping(value = "/getGenreList", produces = "application/json")
-	public ResponseEntity<String> getGenreList() {
+	public ResponseEntity<String> getGenreList() throws Exception {
 		return ResponseEntity.ok(sessionManager.getGenreList());
 	}
 

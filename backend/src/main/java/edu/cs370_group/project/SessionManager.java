@@ -17,7 +17,7 @@ class SessionManager {
 		this.apiHelper = apiHelper;
 	}
 
-	public String endSession(int sessionID) {
+	public String endSession(int sessionID) throws Exception {
 		String response = "{\n";
 		double majority = 0.60;
 
@@ -100,7 +100,7 @@ class SessionManager {
 		return sessionID;
 	}
 
-	public String getGenreList() {
+	public String getGenreList() throws Exception {
 		return (apiHelper.getGenreList());
 	}
 
