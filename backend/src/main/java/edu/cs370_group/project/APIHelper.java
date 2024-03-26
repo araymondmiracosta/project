@@ -117,8 +117,33 @@ class APIHelper {
 	 * 
 	 * @return A List<Integer> containing the film IDs
 	*/
-	public List<Integer> getSimilar(int filmID) {
+	public List<Integer> getSimilar(int filmID) throws Exception {
 		List<Integer> list = new ArrayList<Integer>();
+
+		try{
+			URI endpointURI = new URI("https://api.themoviedb.org/3/movie" + filmID + "/similar?language=en-US&api_key=" + this.apiToken);
+			URLConnection endpointConnection = endpointURI.toURL().openConnection();
+			InputStream response = endpointConnection.getInputStream();
+			Scanner inputScanner = new Scanner(response);
+			StringBuilder responseData = new StringBuilder();
+			while(inputScanner.hasNextLine()){
+				responseData.append(inputScanner.nextLine());
+			}
+			inputScanner.close();
+			response.close();
+
+			JSONObject jsonResponse = new JSONObject(responseData.toString());
+			JSONArray resultsArray = jsonResponse.getJSONArray("results");
+
+			for(int i = 0; i < resultsArray.length(); i++){
+				JSONObject movieObject = resultsArray.getJSONObject(i);
+				int id = movieObject.getInt("id");
+				list.add(id);
+			}
+
+		}catch (Exception e) {
+			throw new Exception("Invalid retrieving similar movies");
+		}
 
 		return list;
 	}
@@ -132,8 +157,26 @@ class APIHelper {
 	 *
 	 * @return A JSON array of genres
 	*/
-	public String getGenreList() {
+	public String getGenreList() throws Exception {
 		// Return the response, unedited, from the API
-		return "";
+		StringBuilder genreListResponse = new StringBuilder();
+
+		try {
+			URI endpointURI = new URI("https://api.themoviedb.org/3/genre/movie/list?language=en-US&api_key=" + this.apiToken);
+			URLConnection endpointConnection = endpointURI.toURL().openConnection();
+			InputStream response = endpointConnection.getInputStream();
+			Scanner inputScanner = new Scanner(response);
+
+			while (inputScanner.hasNextLine()) {
+				genreListResponse.append(inputScanner.nextLine());
+			}
+
+			inputScanner.close();
+			response.close();
+		} catch (Exception e) {
+			throw new Exception("Error retrieving genre list: " + e.getMessage());
+		}
+
+		return genreListResponse.toString();
 	}
 }

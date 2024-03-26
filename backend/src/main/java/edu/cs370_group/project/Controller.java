@@ -66,7 +66,7 @@ public class Controller {
 	}
 
 	@GetMapping(value = "/getGenreList", produces = "application/json")
-	public ResponseEntity<String> getGenreList() {
+	public ResponseEntity<String> getGenreList() throws Exception {
 		return ResponseEntity.ok(apiHelper.getGenreList());
 	}
 
