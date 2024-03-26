@@ -3,8 +3,6 @@ package edu.cs370_group.project;
 import java.util.List;
 import java.util.Scanner;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URLConnection;
@@ -14,6 +12,7 @@ import org.json.*;
 
 class APIHelper {
 	private String apiToken = "ff08d7c9ff8eb9db93d17e72e06f213c";
+	private int listTotal = 20;
 
 	public APIHelper() {
 	}
@@ -33,7 +32,7 @@ class APIHelper {
 	public List<Integer> getFilmList(List<Integer> genres) throws Exception { 	// Throws anything
 		List<Integer> list = new ArrayList<Integer>();
 
-		int perGenre = 20 / genres.size();
+		int perGenre = listTotal / genres.size();
 
 		try {
 			for (Integer genre : genres) {
@@ -71,7 +70,7 @@ class APIHelper {
 	 *
 	 * @return The film title
 	*/
-	public String getFilmTitle(int filmID) throws Exception {
+	public String getFilmTitle(int filmID) {
 		// Parse the JSON and look for the title attribute
 
 		String filmTitle = "";
@@ -87,7 +86,7 @@ class APIHelper {
 			response.close();
 		}
 		catch (Exception exception) {
-			throw new Exception("Invalid film ID");
+			System.out.println("Invalid film ID");
 		}
 
 		return filmTitle;
@@ -122,7 +121,7 @@ class APIHelper {
 			JSONObject jsonResponse = new JSONObject(responseData.toString());
 			JSONArray resultsArray = jsonResponse.getJSONArray("results");
 
-			for(int i = 0; i < resultsArray.length(); i++){
+			for(int i = 0; (i < resultsArray.length() && i < listTotal); i++){
 				JSONObject movieObject = resultsArray.getJSONObject(i);
 				int id = movieObject.getInt("id");
 				list.add(id);
@@ -133,6 +132,7 @@ class APIHelper {
 		}
 
 		return list;
+
 	}
 
 	/**
