@@ -136,11 +136,15 @@ class SessionManager {
 	}
 
 	public void newVote(int sessionID, int optionID) {
-		databaseHelper.newVote(sessionID, optionID);
+		if (databaseHelper.isActiveSession(sessionID)) {
+			databaseHelper.newVote(sessionID, optionID);
+		}
 	}
 
 	public void delVote(int sessionID, int optionID) {
- 		databaseHelper.delVote(sessionID, optionID);
+		if (databaseHelper.isActiveSession(sessionID)) {
+	 		databaseHelper.delVote(sessionID, optionID);
+		}
 	}
 
 	private String getOptionsJSON(int sessionID) {
@@ -157,7 +161,7 @@ class SessionManager {
 
 			response += "\t\t{\n\t\t\t\"optionID\": " + option.toString() + ",\n\t\t\t\"description\": \"" + optionDescription + "\",\n\t\t\t\"voteTally\": " + voteTally + "\n\t\t}";
 
-			if (!(option.equals(optionList.getLast()))) {
+			if (!(option.equals(optionList.get(optionList.size() - 1)))) {
 				response += ",";
 			}
 
@@ -172,8 +176,9 @@ class SessionManager {
 		String output = "";
 
 		Boolean isFilmSession = databaseHelper.isFilmSession(sessionID);
+		Boolean isActiveSession = databaseHelper.isActiveSession(sessionID);
 
-		output += "{\n\t\"sessionID\": " + sessionID + ",\n\t\"isFilmSession\": " + isFilmSession.toString() + ",\n";
+		output += "{\n\t\"sessionID\": " + sessionID + ",\n\t\"isFilmSession\": " + isFilmSession.toString() + ",\n\t\"isActive\": " + isActiveSession.toString() + ",\n";
 
 		output += getOptionsJSON(sessionID);
 		output += "\n}";

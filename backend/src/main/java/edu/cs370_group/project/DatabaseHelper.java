@@ -10,11 +10,11 @@ import java.sql.*;
  * DATABASE SCHEMA:
  *
  * Session
- * ---------------------------
- * | SessionID | SessionType | 
- * ---------------------------
- * | 110       | 0           | (0 = generic, 1 = film)
- * | 111       | 1           |
+ * --------------------------------------
+ * | SessionID | SessionType | isActive |
+ * --------------------------------------
+ * | 110       | 0           | 1        |  (sessionType, 0 = generic, 1 = film)
+ * | 111       | 1           | 0        |
  *
  * TallyOptionTable
  * -----------------------------------------------------
@@ -48,21 +48,32 @@ class DatabaseHelper {
 			if (resultSet.next()) {
 				found = true;
 			}
-			if (!(found)) {
-				// Session table not found, so create it
-				Statement statement = connection.createStatement();
-				String sql = "CREATE TABLE Session " +
-                   "(" +
-					   "SessionID INTEGER not NULL, " +
-					   "SessionType INTEGER, " + 
-					   "PRIMARY KEY (SessionID)" +
-				   ")";
+			
+			Statement statement;
+			String sql;
+			// Tables found, drop them so we can recreate schema
+			if (found) {
+				statement = connection.createStatement();
+				sql = "DROP TABLE Session";
 				statement.executeUpdate(sql);
-				System.out.println("Created Session table successfully.");   	
+				System.out.println("Dropped Session table.");
+
+				statement = connection.createStatement();
+				sql = "DROP TABLE TallyOptionTable";
+				statement.executeUpdate(sql);
+				System.out.println("Dropped TallyOptionTable");
 			}
-			else {
-				System.out.println("Session table already created.");
-			}
+			// Create Session Table
+			statement = connection.createStatement();
+			sql = "CREATE TABLE Session " +
+               "(" +
+				   "SessionID INTEGER not NULL, " +
+				   "SessionType INTEGER, " +
+				   "isActive INTEGER, " +
+				   "PRIMARY KEY (SessionID)" +
+			   ")";
+			statement.executeUpdate(sql);
+			System.out.println("Created Session table successfully.");   	
 
 			tableName = "TallyOptionTable";
 			found = false;
@@ -72,8 +83,8 @@ class DatabaseHelper {
 			}
 			if (!(found)) {
 				// Option table not found, so create it
-				Statement statement = connection.createStatement();
-				String sql = "CREATE TABLE TallyOptionTable" +
+				statement = connection.createStatement();
+				sql = "CREATE TABLE TallyOptionTable" +
 					"(" +
 						"OptionID INTEGER not NULL, " +
 						"SessionID INTEGER, " +
@@ -110,8 +121,8 @@ class DatabaseHelper {
 		int isFilmSessionInteger = isFilmSession ? 1 : 0;
 		try {
 			Statement statement = connection.createStatement();
-			String sql = "INSERT INTO Session (SessionID, SessionType) " +
-				   		 "VALUES (" + sessionID + ", " + isFilmSessionInteger + ")";
+			String sql = "INSERT INTO Session (SessionID, SessionType, isActive) " +
+				   		 "VALUES (" + sessionID + ", " + isFilmSessionInteger + ", 1)";
 			statement.executeUpdate(sql);
 			System.out.println("New session added to Session table.");
 			setOptions(sessionID, options);
@@ -122,24 +133,18 @@ class DatabaseHelper {
 	}
 
 	/**
-	 * Removes the given sesssion from the Session table and any
-	 * corresponding option rows from the Option table
+	 * Marks the given sesssion from the Session table as not active
 	 *
-	 * @param sessionID The session ID to remove
+	 * @param sessionID The session ID to mark as unactive
 	*/
 	public void endSession(int sessionID) {
 		try {
 			Statement statement;
 			String sql;
 			statement = connection.createStatement();
-			sql = "DELETE FROM TallyOptionTable WHERE SessionID=" + sessionID;
+			sql = "UPDATE Session SET isActive = 0 WHERE SessionID=" + sessionID;
 			statement.executeUpdate(sql);
-			System.out.println("Options deleted for sessionID: " + sessionID);
-
-			statement = connection.createStatement();
-			sql = "DELETE FROM Session WHERE SessionID=" + sessionID;
-			statement.executeUpdate(sql);
-			System.out.println("Session deleted for sessionID: " + sessionID);
+			System.out.println("Session marked as not active for sessionID: " + sessionID);
 		}
 		catch (Exception exception) {
 			System.out.println(exception);
@@ -258,7 +263,7 @@ class DatabaseHelper {
 				String description = optionMap.entrySet().iterator().next().getValue(); // I love Java :P (SAME)
 				statement = connection.createStatement();
 				sql = "INSERT INTO TallyOptionTable (OptionID, SessionID, Description, VoteTally) " +
-							 "VALUES (" + optionID + ", " + sessionID + ", \'" + description + "\', " + 0 + ")";
+							 "VALUES (" + optionID + ", " + sessionID + ", \'" + description.replace("\'", "") + "\', " + 0 + ")";
 				statement.executeUpdate(sql);
 			}
 			System.out.println("New options added to Option table.");
@@ -328,5 +333,37 @@ class DatabaseHelper {
 		}
 
 		return Description;
+	}
+
+	/**
+	 * Returns true if the session indicated by the given session ID is
+	 * active.
+	 *
+	 * @param sessionID The ID of the session
+	 *
+	 * @return True if active, false if not
+	 */
+	public Boolean isActiveSession(int sessionID) {
+		try {
+			Statement statement;
+			String sql;
+			statement = connection.createStatement();
+			sql = "SELECT SessionID, isActive FROM Session WHERE SessionID=" + sessionID;
+			ResultSet resultSet = statement.executeQuery(sql);
+			while (resultSet.next()) {
+				int sessionType = resultSet.getInt("isActive");
+				if (sessionType == 0) {
+					return false;
+				}
+				else if (sessionType == 1) {
+					return true;
+				}
+			}
+		}
+		catch (Exception exception) {
+			System.out.println(exception);
+		}
+ 
+		return false;
 	}
 }
