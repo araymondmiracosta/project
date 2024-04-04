@@ -92,6 +92,28 @@ class APIHelper {
 		return filmTitle;
 	}
 
+	public String getFilm(int filmID) {
+		// Parse the JSON and look for the title attribute
+
+		String apiResponse = "";
+		try {
+			URI endpointURI = new URI("https://api.themoviedb.org/3/movie/" + filmID + "?language=en-US" + "&api_key=" + this.apiToken);
+			URLConnection endpointConnection = endpointURI.toURL().openConnection();
+			InputStream response = endpointConnection.getInputStream();
+			Scanner inputScanner = new Scanner(response);
+			JSONObject jsonObject = new JSONObject(inputScanner.nextLine());
+			apiResponse = jsonObject.toString();
+
+			inputScanner.close();
+			response.close();
+		}
+		catch (Exception exception) {
+			System.out.println("Invalid film ID");
+		}
+
+		return apiResponse;
+	}
+
 	/**
 	 * Returns a java List<Integer> object containing
 	 * film IDs similar to the one given.

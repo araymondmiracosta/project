@@ -71,7 +71,6 @@ public class Controller {
 	}
 
 
-	@GetMapping("/createFilmSession")
 	@GetMapping(value = "/createFilmSession", produces = "application/json")
 	public String createFilmSession(@RequestParam String[] genres) throws Exception {
 		List<Integer> genreList = new ArrayList<Integer>();
