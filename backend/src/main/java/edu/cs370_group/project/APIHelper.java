@@ -3,8 +3,6 @@ package edu.cs370_group.project;
 import java.util.List;
 import java.util.Scanner;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URLConnection;
@@ -14,23 +12,11 @@ import org.json.*;
 
 class APIHelper {
 	private String apiToken = "ff08d7c9ff8eb9db93d17e72e06f213c";
+	private int listTotal = 20;
 
 	public APIHelper() {
-		// Read the api key from a file
-//		File file = new File("./apitoken.txt");
-//		try {
-//			FileInputStream fileInputStream = new FileInputStream(file);
-//			Scanner scanner = new Scanner(fileInputStream);
-//			this.apiToken = scanner.nextLine();
-//			scanner.close();
-//			fileInputStream.close();
-//		}
-//		catch (Exception exception) {
-//			System.out.println(exception);
-//			System.out.println("Is the API token file present? Exiting...");
-//			System.exit(1);
-//		}
 	}
+
 	/** 
 	 * Returns a List<Integer> containing the film IDs
 	 * associated with the given genres.
@@ -46,7 +32,7 @@ class APIHelper {
 	public List<Integer> getFilmList(List<Integer> genres) throws Exception { 	// Throws anything
 		List<Integer> list = new ArrayList<Integer>();
 
-		int perGenre = 20 / genres.size();
+		int perGenre = listTotal / genres.size();
 
 		try {
 			for (Integer genre : genres) {
@@ -84,7 +70,7 @@ class APIHelper {
 	 *
 	 * @return The film title
 	*/
-	public String getFilmTitle(int filmID) throws Exception {
+	public String getFilmTitle(int filmID) {
 		// Parse the JSON and look for the title attribute
 
 		String filmTitle = "";
@@ -100,48 +86,10 @@ class APIHelper {
 			response.close();
 		}
 		catch (Exception exception) {
-			throw new Exception("Invalid film ID");
+			System.out.println("Invalid film ID");
 		}
 
 		return filmTitle;
-	}
-
-	public String getFilm(int filmID) throws Exception {
-		// Parse the JSON and look for the title attribute
-
-		String filmTitle = "";
-		String vote_average = "";
-		String overview = "";
-		String release_date = "";
-		String poster_path = "";
-		try {
-			URI endpointURI = new URI("https://api.themoviedb.org/3/movie/" + filmID + "?language=en-US" + "&api_key=" + this.apiToken);
-			URLConnection endpointConnection = endpointURI.toURL().openConnection();
-			InputStream response = endpointConnection.getInputStream();
-			Scanner inputScanner = new Scanner(response);
-			JSONObject jsonObject = new JSONObject(inputScanner.nextLine());
-			filmTitle = jsonObject.getString("title");
-			vote_average = jsonObject.getBigDecimal("vote_average").toString();
-			overview = jsonObject.getString("overview");
-			release_date = jsonObject.getString("release_date");
-			poster_path = jsonObject.getString("poster_path");
-
-
-			inputScanner.close();
-			response.close();
-		}
-		catch (Exception exception) {
-			throw new Exception("Invalid film ID" + exception);
-		}
-
-		JSONObject json = new JSONObject();
-		json.put("title", filmTitle);
-		json.put("vote_average", vote_average);
-		json.put("overview", overview);
-		json.put("release_date", release_date);
-		json.put("poster_path", poster_path);
-		return json.toString();
-
 	}
 
 	/**
@@ -155,10 +103,36 @@ class APIHelper {
 	 * 
 	 * @return A List<Integer> containing the film IDs
 	*/
-	public List<Integer> getSimilar(int filmID) {
+	public List<Integer> getSimilar(int filmID) throws Exception {
 		List<Integer> list = new ArrayList<Integer>();
 
+		try{
+			URI endpointURI = new URI("https://api.themoviedb.org/3/movie/" + filmID + "/similar?language=en-US&api_key=" + this.apiToken);
+			URLConnection endpointConnection = endpointURI.toURL().openConnection();
+			InputStream response = endpointConnection.getInputStream();
+			Scanner inputScanner = new Scanner(response);
+			StringBuilder responseData = new StringBuilder();
+			while(inputScanner.hasNextLine()){
+				responseData.append(inputScanner.nextLine());
+			}
+			inputScanner.close();
+			response.close();
+
+			JSONObject jsonResponse = new JSONObject(responseData.toString());
+			JSONArray resultsArray = jsonResponse.getJSONArray("results");
+
+			for(int i = 0; (i < resultsArray.length() && i < listTotal); i++){
+				JSONObject movieObject = resultsArray.getJSONObject(i);
+				int id = movieObject.getInt("id");
+				list.add(id);
+			}
+
+		}catch (Exception e) {
+			throw new Exception(e);
+		}
+
 		return list;
+
 	}
 
 	/**
@@ -170,8 +144,26 @@ class APIHelper {
 	 *
 	 * @return A JSON array of genres
 	*/
-	public String getGenreList() {
+	public String getGenreList() throws Exception {
 		// Return the response, unedited, from the API
-		return "";
+		StringBuilder genreListResponse = new StringBuilder();
+
+		try {
+			URI endpointURI = new URI("https://api.themoviedb.org/3/genre/movie/list?language=en-US&api_key=" + this.apiToken);
+			URLConnection endpointConnection = endpointURI.toURL().openConnection();
+			InputStream response = endpointConnection.getInputStream();
+			Scanner inputScanner = new Scanner(response);
+
+			while (inputScanner.hasNextLine()) {
+				genreListResponse.append(inputScanner.nextLine());
+			}
+
+			inputScanner.close();
+			response.close();
+		} catch (Exception e) {
+			throw new Exception("Error retrieving genre list: " + e.getMessage());
+		}
+
+		return genreListResponse.toString();
 	}
 }

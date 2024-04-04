@@ -11,7 +11,6 @@ import java.util.ArrayList;
 @CrossOrigin
 @org.springframework.stereotype.Controller
 @ResponseBody
-@ResponseStatus(HttpStatus.NOT_IMPLEMENTED)
 public class Controller {
 	DatabaseHelper databaseHelper = null;
 	APIHelper apiHelper = null;
@@ -27,11 +26,6 @@ public class Controller {
 			System.exit(1);
 		}
 	}
-
-/*	@RequestMapping(value = "/getSessions", produces = "application/json")
-	public ResponseEntity<String> getSessions() {
-		return ResponseEntity.ok(sessionManager.getSessions());
-	} */
 
 	@GetMapping(value = "/getSessionInfo", produces = "application/json")
 	public String getSessionInfo(@RequestParam int session) throws Exception{
@@ -49,7 +43,7 @@ public class Controller {
 	}
 
 	@GetMapping(value = "/endSession", produces = "application/json")
-	public String endSession(@RequestParam int session) {
+	public String endSession(@RequestParam int session) throws Exception {
 		return (sessionManager.endSession(session));
 	}
 
@@ -66,8 +60,8 @@ public class Controller {
 	}
 
 	@GetMapping(value = "/getGenreList", produces = "application/json")
-	public ResponseEntity<String> getGenreList() {
-		return ResponseEntity.ok(apiHelper.getGenreList());
+	public ResponseEntity<String> getGenreList() throws Exception {
+		return ResponseEntity.ok(sessionManager.getGenreList());
 	}
 
 	//getFilm by ID
@@ -78,6 +72,7 @@ public class Controller {
 
 
 	@GetMapping("/createFilmSession")
+	@GetMapping(value = "/createFilmSession", produces = "application/json")
 	public String createFilmSession(@RequestParam String[] genres) throws Exception {
 		List<Integer> genreList = new ArrayList<Integer>();
 		for (int i = 0; i < genres.length; i++) {
