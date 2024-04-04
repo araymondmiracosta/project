@@ -1,11 +1,12 @@
 <template>
-  <div class="container">
+  <div class="container" v-if="!doneVoting">
     <div v-if="currentOption && currentOption.description
-      " class="option-display">
+    " class="option-display">
       <div class="header">
-        <h2>{{ movie_data.title }}
+        <h2>{{ movie_data.title ?? currentOption.description }}
         </h2>
-        <div class="vote-avrg">
+
+        <div class="vote-avrg" v-if="session.isFilmSession">
           {{ movie_data.vote_average }} <svg width="46" height="46" fill="none" stroke="currentColor"
             stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg">
@@ -14,6 +15,9 @@
           </svg>
         </div>
       </div>
+      <span>
+        {{ currentOptionIndex }} / {{ options.length }}
+      </span>
 
       <img v-if="sessionData.isFilmSession && movie_img" :src="movie_img" alt="movie poster" />
 
@@ -35,11 +39,16 @@
       </div>
     </div>
     <div v-else>
-      <button class="button" @click="startSession">Start Your Session</button>
+      <button class="button" @click="startSession">Start Voting</button>
     </div>
 
 
 
+  </div>
+  <div v-if="doneVoting" class="container">
+    <h2>Great Job!</h2>
+    <p>Waiting for the session to end. You will be redirected to the results page as soon as all votes are in.
+    </p>
   </div>
 </template>
 <script lang="ts">
@@ -67,6 +76,8 @@ export default defineComponent({
       currentOption: {} as Option,
       movie_data: {} as Movie,
       movie_img: '',
+
+      doneVoting: false,
     };
   },
   mounted() {
@@ -76,10 +87,24 @@ export default defineComponent({
   },
   methods: {
 
-    async startSession() {
-      console.log(typeof this.options); // This will log 'object' for arrays as well in JavaScript
+    async waitUntilSessionEnds() {
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        let url = getAPIUrl() + '/getSession?sessionID=' + this.sessionData.sessionID;
+        let response = await fetch(url);
+        let data = await response.json();
+        console.log("Session data: ", data);
+        
+        if (data.is_active == false) {
+          this.$router.push('/results' + this.sessionData.sessionID);
+          break;
+        }
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    },
 
-      // Correct way to check if this.options is an array and has at least one element
+    async startSession() {
+
       if (Array.isArray(this.options) && this.options.length > 0) {
         this.currentOption = this.options[0];
         if (this.sessionData.isFilmSession) {
@@ -105,18 +130,39 @@ export default defineComponent({
 
 
     async like() {
-      this.options.splice(this.currentOptionIndex, 1);
-      if (this.currentOptionIndex >= this.options.length) {
-        this.currentOptionIndex = 0;
+      if (this.currentOptionIndex < this.options.length - 1) {
+        this.currentOptionIndex += 1;
+      } else {
+        this.doneVoting = true;
+        await this.waitUntilSessionEnds();
       }
+
       this.currentOption = this.options[this.currentOptionIndex];
       if (this.sessionData.isFilmSession) {
         await this.getMovie(this.currentOption.optionID);
       }
+
+      let url = getAPIUrl() + '/newVote?session=' + this.sessionData.sessionID + '&&option=' + this.currentOption.optionID;
+      await fetch(url);
     },
 
-    dislike() {
-      this.like();
+    async dislike() {
+      if (this.currentOptionIndex < this.options.length - 1) {
+        console.log('Dislike 1');
+        
+        this.currentOptionIndex += 1;
+      } else {
+        console.log('Dislike 2');
+
+        this.doneVoting = true;
+        await this.waitUntilSessionEnds();
+      }
+
+      
+      this.currentOption = this.options[this.currentOptionIndex];
+      if (this.sessionData.isFilmSession) {
+        await this.getMovie(this.currentOption.optionID);
+      }
     },
   },
 });
@@ -126,6 +172,8 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  height: 80vh;
 }
 
 .option-display {

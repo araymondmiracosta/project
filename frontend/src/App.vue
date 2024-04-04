@@ -5,10 +5,11 @@
 
 <style lang="scss">
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
-
 :root {
   --primary: #ea4080;
+  --primary-light: #ea4081a1;
   --secondary: #ee805f;
+  --secondary-light: #ee805fa1;
   --gray: #828693;
   --primary-text: #373d4f;
 }
@@ -79,6 +80,11 @@ p {
     margin-right: 0.5rem;
     width: 20px;
     height: 20px;
+  }
+
+  &.--small {
+    padding: 10px 20px;
+    font-size: 14.984px;
   }
 
 
