@@ -2,13 +2,13 @@ package edu.cs370_group.project;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.ArrayList;
 
+// this is not a secure way of doing it, but since we wont deploy it we allow all origins
+@CrossOrigin
 @org.springframework.stereotype.Controller
 @ResponseBody
 public class Controller {
@@ -28,7 +28,7 @@ public class Controller {
 	}
 
 	@GetMapping(value = "/getSessionInfo", produces = "application/json")
-	public String getSessionInfo(@RequestParam int session) {
+	public String getSessionInfo(@RequestParam int session) throws Exception{
 		return (sessionManager.getSessionInfo(session));
 	}
 
@@ -63,6 +63,13 @@ public class Controller {
 	public ResponseEntity<String> getGenreList() throws Exception {
 		return ResponseEntity.ok(sessionManager.getGenreList());
 	}
+
+	//getFilm by ID
+	@GetMapping(value = "/getFilm", produces = "application/json")
+	public String getFilm(@RequestParam int filmID) throws Exception {
+		return (apiHelper.getFilm(filmID));
+	}
+
 
 	@GetMapping(value = "/createFilmSession", produces = "application/json")
 	public String createFilmSession(@RequestParam String[] genres) throws Exception {
