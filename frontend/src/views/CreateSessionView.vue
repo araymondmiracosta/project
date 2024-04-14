@@ -10,20 +10,16 @@
       </div>
     </div>
 
-
     <div v-if="currentStep == 2 && selectedOption === 'movies'" class="step">
       <h2>Select Genres</h2>
       <p>What genres should we include into selection</p>
       <div class="container">
         <div v-for="(genreId, genreName) in genresMap" :key="genreId">
-          <div class="small-option" :class="{ '--selected': selectedGenres.includes(genreId) }"
-            @click="toggleGenre(genreId)">
+          <div class="small-option" :class="{ '--selected': selectedGenres.includes(genreId) }" @click="toggleGenre(genreId)">
             {{ genreName }}
           </div>
         </div>
       </div>
-
-
     </div>
 
     <div v-if="currentStep == 2 && selectedOption === 'custom'" class="step">
@@ -32,10 +28,9 @@
 
       <div class="container">
         <div v-for="(option, index) in customOptions" :key="index" class="custom-option">
-          <span class="small-option --selected">{{ option }}
-            <svg @click="removeCustomOption(index)" width="46" height="46" fill="none" stroke="currentColor"
-              stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg">
+          <span class="small-option --selected">
+            {{ option }}
+            <svg @click="removeCustomOption(index)" width="46" height="46" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path d="M12 2a10 10 0 1 0 0 20 10 10 0 1 0 0-20z"></path>
               <path d="m15 9-6 6"></path>
               <path d="m9 9 6 6"></path>
@@ -53,10 +48,9 @@
       <button class="button --secondary" @click="currentStep--" v-if="currentStep > 1">
         Back
       </button>
-      <button class="button" :class="{ '--disabled': !selectedOption }" @click="incrementStepOrCreateSession">
-        {{
-      currentStep === 1 ? 'Next' : 'Create session'
-    }}
+      <button class="button" :class="{ '--disabled': !selectedOption || loading }" @click="incrementStepOrCreateSession" :disabled="loading">
+        <ProgressSpinner v-if="loading" style="width: 20px; height: 20px;" strokeWidth="8" fill="var(--surface-ground)" animationDuration=".5s" />
+        <span v-else>{{ currentStep === 1 ? 'Next' : 'Create session' }}</span>
       </button>
     </div>
   </div>
@@ -65,10 +59,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { getAPIUrl } from '../utils';
+import ProgressSpinner from 'primevue/progressspinner';
 
 export default defineComponent({
   name: 'CreateSessionView',
-  components: {},
+  components: {
+    ProgressSpinner,
+  },
   data() {
     return {
       sessionIDredirect: '',
@@ -99,12 +96,10 @@ export default defineComponent({
       },
       customOptions: [] as string[],
       newOption: '',
-
+      loading: false,
     };
   },
   methods: {
-
-    //a function to save the session id to the local storage as owns_session : 1234
     saveSessionID(sessionID: string) {
       localStorage.setItem('owns_session', sessionID);
     },
@@ -127,13 +122,17 @@ export default defineComponent({
         this.newOption = '';
       }
     },
+
     removeCustomOption(index: number) {
       this.customOptions.splice(index, 1);
     },
+
     async createFilmSession() {
+      this.loading = true;
       let url = getAPIUrl() + `/createFilmSession?genres=${this.selectedGenres.join(',')}`;
       let response = await fetch(url);
       let data = await response.json();
+      this.loading = false;
 
       if (data.sessionID) {
         this.saveSessionID(data.sessionID);
@@ -144,9 +143,12 @@ export default defineComponent({
     },
 
     async createCustomSession() {
+      this.loading = true;
       let url = getAPIUrl() + `/createGenericSession?options=${this.customOptions.join(',')}`;
       let response = await fetch(url);
       let data = await response.json();
+      this.loading = false;
+
       if (data.sessionID) {
         this.saveSessionID(data.sessionID);
         this.$router.push(`/join/${data.sessionID}`);
@@ -154,9 +156,11 @@ export default defineComponent({
         this.error = data.error;
       }
     },
+
     selectOption(option: string) {
-      this.selectedOption = option; // Add this method to update the selected option
+      this.selectedOption = option;
     },
+
     toggleGenre(genre: number) {
       if (this.selectedGenres.includes(genre)) {
         this.selectedGenres = this.selectedGenres.filter((g) => g !== genre);
@@ -164,9 +168,6 @@ export default defineComponent({
         this.selectedGenres.push(genre);
       }
     },
-  },
-  computed: {
-
   },
 });
 </script>

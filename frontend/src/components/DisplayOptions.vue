@@ -49,10 +49,12 @@
     <h2>Great Job!</h2>
     <p>Waiting for the session to end. You will be redirected to the results page as soon as all votes are in.
     </p>
+    <b>If you are the session owner, you can need to end the session manually.
+    </b>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue';
 import { Session, Option, Movie } from '../types';
 import { getAPIUrl } from '../utils';
 
@@ -72,7 +74,7 @@ export default defineComponent({
       isSessionOwner: false,
       sessionData: {} as Session,
       options: [] as Option[],
-      currentOptionIndex: 1,
+      currentOptionIndex: 0,
       currentOption: {} as Option,
       movie_data: {} as Movie,
       movie_img: '',
@@ -84,19 +86,23 @@ export default defineComponent({
     this.sessionData = this.session;
     this.options = this.sessionData.options;
 
+    if (this.sessionData.isActive == false) {
+      this.$router.push('/results/' + this.sessionData.sessionID);
+    }
+
   },
   methods: {
 
     async waitUntilSessionEnds() {
       // eslint-disable-next-line no-constant-condition
       while (true) {
-        let url = getAPIUrl() + '/getSession?sessionID=' + this.sessionData.sessionID;
+        let url = getAPIUrl() + '/getSessionInfo?session=' + this.sessionData.sessionID;
         let response = await fetch(url);
         let data = await response.json();
         console.log("Session data: ", data);
-        
-        if (data.is_active == false) {
-          this.$router.push('/results' + this.sessionData.sessionID);
+
+        if (data.isActive == false) {
+          this.$router.push('/results/' + this.sessionData.sessionID);
           break;
         }
         await new Promise(resolve => setTimeout(resolve, 1000));
@@ -130,40 +136,33 @@ export default defineComponent({
 
 
     async like() {
+      let url = getAPIUrl() + '/newVote?session=' + this.sessionData.sessionID + '&&option=' + this.currentOption.optionID;
+      await fetch(url);
+
       if (this.currentOptionIndex < this.options.length - 1) {
         this.currentOptionIndex += 1;
+        this.currentOption = this.options[this.currentOptionIndex];
+        if (this.sessionData.isFilmSession) {
+          await this.getMovie(this.currentOption.optionID);
+        }
       } else {
         this.doneVoting = true;
         await this.waitUntilSessionEnds();
       }
-
-      this.currentOption = this.options[this.currentOptionIndex];
-      if (this.sessionData.isFilmSession) {
-        await this.getMovie(this.currentOption.optionID);
-      }
-
-      let url = getAPIUrl() + '/newVote?session=' + this.sessionData.sessionID + '&&option=' + this.currentOption.optionID;
-      await fetch(url);
     },
 
     async dislike() {
       if (this.currentOptionIndex < this.options.length - 1) {
-        console.log('Dislike 1');
-        
         this.currentOptionIndex += 1;
+        this.currentOption = this.options[this.currentOptionIndex];
+        if (this.sessionData.isFilmSession) {
+          await this.getMovie(this.currentOption.optionID);
+        }
       } else {
-        console.log('Dislike 2');
-
         this.doneVoting = true;
         await this.waitUntilSessionEnds();
       }
-
-      
-      this.currentOption = this.options[this.currentOptionIndex];
-      if (this.sessionData.isFilmSession) {
-        await this.getMovie(this.currentOption.optionID);
-      }
-    },
+    }
   },
 });
 </script>
