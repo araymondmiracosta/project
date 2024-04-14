@@ -20,11 +20,17 @@
                     </tr>
                 </tbody>
             </table>
+
+            <div class="controls">
+                <button class="button --primary" @click="$router.push('/')">New Session</button>
+            </div>
+
         </div>
     </div>
 </template>
 
 <script lang="ts">
+import { Session } from '@/types';
 import { getAPIUrl } from '@/utils';
 import { defineComponent } from 'vue';
 
@@ -37,37 +43,8 @@ export default defineComponent({
         return {
             error: '',
             isSessionOwner: false,
-            sessionData: {
-                "consensus": false,
-                "options": [
-                    {
-                        "optionID": 0,
-                        "description": "Description text # 1",
-                        "voteTally": 7
-                    },
-                    {
-                        "optionID": 1,
-                        "description": "Description text # 2",
-                        "voteTally": 3
-                    },
-                    {
-                        "optionID": 2,
-                        "description": "Description text # 3",
-                        "voteTally": 5
-                    },
-                    {
-                        "optionID": 3,
-                        "description": "Description text # 4",
-                        "voteTally": 0
-                    },
-                    {
-                        "optionID": 4,
-                        "description": "Description text # 5",
-                        "voteTally": 1
-                    }
-
-                ]
-            }
+            sessionData: {} as Session,
+          
         };
     },
 
@@ -90,18 +67,20 @@ export default defineComponent({
                 this.error = 'Session not found';
             } else {
 
-                if (data.is_active) {
+                if (data.isActive) {
                     this.$router.push('/join/' + this.sessionID);
                 }
 
                 this.sessionData = data;
+
+                this.sessionData.options.sort((a: any, b: any) => b.voteTally - a.voteTally);
 
             }
 
         },
     },
     mounted() {
-        //this.checkIfSessionExists();
+        this.checkIfSessionExists();
     },
     computed: {
         sessionID(): string | string[] | undefined {

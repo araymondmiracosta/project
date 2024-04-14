@@ -2,6 +2,7 @@ type Session = {
     sessionID: number;
     isFilmSession: boolean;
     options: Option[];
+    isActive: boolean;
 }
 
 type Option =
